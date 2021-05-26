@@ -1,0 +1,271 @@
+﻿REGIÃO;UF;VENDAS DE GASOLINA C;ANO
+Norte;Rondônia ;286,146;2010
+Norte;Acre ;94,984;2010
+Norte;Amazonas ;468,688;2010
+Norte;Roraima ;85,768;2010
+Norte;Pará ;674,941;2010
+Norte;Amapá;99,396;2010
+Norte;Tocantins ;217,260877;2010
+Nordeste;Maranhão ;522,287;2010
+Nordeste;Piauí ;345,391;2010
+Nordeste;Ceará ;820,165;2010
+Nordeste;Rio Grande do Norte ;403,55;2010
+Nordeste;Paraíba ;444,826;2010
+Nordeste;Pernambuco;898,933;2010
+Nordeste;Alagoas;245,328;2010
+Nordeste;Sergipe;259,063;2010
+Nordeste;Bahia;1273,406;2010
+Sudeste;Minas Gerais;3677,904;2010
+Sudeste;Espírito Santo;638,224;2010
+Sudeste;Rio de Janeiro;1867,262;2010
+Sudeste;São Paulo;7436,237;2010
+Sul ;Paraná ;1885,665;2010
+Sul ;Santa Catarina;1787,185;2010
+Sul ;Rio Grande do Sul ;2582,904;2010
+Centro-Oeste;Mato Grosso do Sul ;451,271;2010
+Centro-Oeste;Mato Grosso;393,807;2010
+Centro-Oeste;Goiás;1083,507;2010
+Centro-Oeste;Distrito Federal ;899,566911;2010
+Norte;Rondônia ;325,210119;2011
+Norte;Acre ;106,948783;2011
+Norte;Amazonas ;521,355097;2011
+Norte;Roraima ;88,27325;2011
+Norte;Pará ;768,592559;2011
+Norte;Amapá;109,5156;2011
+Norte;Tocantins ;249,67417;2011
+Nordeste;Maranhão ;628,889231;2011
+Nordeste;Piauí ;373,9859;2011
+Nordeste;Ceará ;943,328047;2011
+Nordeste;Rio Grande do Norte ;484,517099;2011
+Nordeste;Paraíba ;511,689326;2011
+Nordeste;Pernambuco;1106,865965;2011
+Nordeste;Alagoas;303,096084;2011
+Nordeste;Sergipe;298,401148;2011
+Nordeste;Bahia;1588,825698;2011
+Sudeste;Minas Gerais;4099,918355;2011
+Sudeste;Espírito Santo;715,752591;2011
+Sudeste;Rio de Janeiro;2280,077811;2011
+Sudeste;São Paulo;9461,875412;2011
+Sul ;Paraná ;2403,005274;2011
+Sul ;Santa Catarina;2008,653522;2011
+Sul ;Rio Grande do Sul ;2813,757284;2011
+Centro-Oeste;Mato Grosso do Sul ;552,064642;2011
+Centro-Oeste;Mato Grosso;488,40784;2011
+Centro-Oeste;Goiás;1256,556806;2011
+Centro-Oeste;Distrito Federal ;1002,018082;2011
+Norte;Rondônia ;365,37029;2012
+Norte;Acre ;118,89175;2012
+Norte;Amazonas ;569,396746;2012
+Norte;Roraima ;99,43;2012
+Norte;Pará ;909,505429;2012
+Norte;Amapá;127,9845;2012
+Norte;Tocantins ;296,202184;2012
+Nordeste;Maranhão ;750,7629;2012
+Nordeste;Piauí ;454,910226;2012
+Nordeste;Ceará ;1120,767704;2012
+Nordeste;Rio Grande do Norte ;561,903619;2012
+Nordeste;Paraíba ;588,349214;2012
+Nordeste;Pernambuco;1290,226164;2012
+Nordeste;Alagoas;363,832649;2012
+Nordeste;Sergipe;340,092125;2012
+Nordeste;Bahia;1842,729921;2012
+Sudeste;Minas Gerais;4459,305494;2012
+Sudeste;Espírito Santo;821,777452;2012
+Sudeste;Rio de Janeiro;2470,659318;2012
+Sudeste;São Paulo;10305,84477;2012
+Sul ;Paraná ;2771,272221;2012
+Sul ;Santa Catarina;2225,459465;2012
+Sul ;Rio Grande do Sul ;3081,486602;2012
+Centro-Oeste;Mato Grosso do Sul ;643,255258;2012
+Centro-Oeste;Mato Grosso;593,01155;2012
+Centro-Oeste;Goiás;1446,209174;2012
+Centro-Oeste;Distrito Federal ;1079,078001;2012
+Norte;Rondônia ;378,46295;2013
+Norte;Acre ;125,329986;2013
+Norte;Amazonas ;590,749207;2013
+Norte;Roraima ;108,8613;2013
+Norte;Pará ;996,173282;2013
+Norte;Amapá;137,8998;2013
+Norte;Tocantins ;312,274286;2013
+Nordeste;Maranhão ;803,208635;2013
+Nordeste;Piauí ;500,001489;2013
+Nordeste;Ceará ;1216,335292;2013
+Nordeste;Rio Grande do Norte ;605,600692;2013
+Nordeste;Paraíba ;625,181695;2013
+Nordeste;Pernambuco;1379,495065;2013
+Nordeste;Alagoas;400,517967;2013
+Nordeste;Sergipe;366,89707;2013
+Nordeste;Bahia;1943,731376;2013
+Sudeste;Minas Gerais;4655,42652;2013
+Sudeste;Espírito Santo;861,718453;2013
+Sudeste;Rio de Janeiro;2616,82121;2013
+Sudeste;São Paulo;10476,82209;2013
+Sul ;Paraná ;2752,702114;2013
+Sul ;Santa Catarina;2364,07862;2013
+Sul ;Rio Grande do Sul ;3297,196148;2013
+Centro-Oeste;Mato Grosso do Sul ;671,116667;2013
+Centro-Oeste;Mato Grosso;586,942405;2013
+Centro-Oeste;Goiás;1529,63001;2013
+Centro-Oeste;Distrito Federal ;1123,06226;2013
+Norte;Rondônia ;406,947366;2014
+Norte;Acre ;138,15175;2014
+Norte;Amazonas ;627,353968;2014
+Norte;Roraima ;122,815081;2014
+Norte;Pará ;1098,714351;2014
+Norte;Amapá;154,4174;2014
+Norte;Tocantins ;350,345439;2014
+Nordeste;Maranhão ;887,026275;2014
+Nordeste;Piauí ;569,210195;2014
+Nordeste;Ceará ;1348,677035;2014
+Nordeste;Rio Grande do Norte ;652,345854;2014
+Nordeste;Paraíba ;686,269949;2014
+Nordeste;Pernambuco;1497,221784;2014
+Nordeste;Alagoas;441,612033;2014
+Nordeste;Sergipe;403,098466;2014
+Nordeste;Bahia;2145,017179;2014
+Sudeste;Minas Gerais;4986,074281;2014
+Sudeste;Espírito Santo;934,933588;2014
+Sudeste;Rio de Janeiro;2861,013377;2014
+Sudeste;São Paulo;10849,78585;2014
+Sul ;Paraná ;2886,6741;2014
+Sul ;Santa Catarina;2571,463105;2014
+Sul ;Rio Grande do Sul ;3552,611804;2014
+Centro-Oeste;Mato Grosso do Sul ;717,740234;2014
+Centro-Oeste;Mato Grosso;662,409154;2014
+Centro-Oeste;Goiás;1639,888518;2014
+Centro-Oeste;Distrito Federal ;1172,428676;2014
+Norte;Rondônia ;416,855032;2015
+Norte;Acre ;140,25884;2015
+Norte;Amazonas ;617,20343;2015
+Norte;Roraima ;123,890243;2015
+Norte;Pará ;1131,966264;2015
+Norte;Amapá;153,753221;2015
+Norte;Tocantins ;348,183435;2015
+Nordeste;Maranhão ;889,941815;2015
+Nordeste;Piauí ;579,918418;2015
+Nordeste;Ceará ;1331,394414;2015
+Nordeste;Rio Grande do Norte ;644,783747;2015
+Nordeste;Paraíba ;662,396748;2015
+Nordeste;Pernambuco;1377,723967;2015
+Nordeste;Alagoas;425,872693;2015
+Nordeste;Sergipe;390,746965;2015
+Nordeste;Bahia;2050,79353;2015
+Sudeste;Minas Gerais;4296,429034;2015
+Sudeste;Espírito Santo;917,021221;2015
+Sudeste;Rio de Janeiro;2733,573242;2015
+Sudeste;São Paulo;9436,733193;2015
+Sul ;Paraná ;2591,179507;2015
+Sul ;Santa Catarina;2560,629765;2015
+Sul ;Rio Grande do Sul ;3494,738689;2015
+Centro-Oeste;Mato Grosso do Sul ;663,753428;2015
+Centro-Oeste;Mato Grosso;565,513122;2015
+Centro-Oeste;Goiás;1469,880459;2015
+Centro-Oeste;Distrito Federal ;1122,267148;2015
+Norte;Rondônia ;431,573744;2016
+Norte;Acre ;136,817744;2016
+Norte;Amazonas ;634,172722;2016
+Norte;Roraima ;129,943602;2016
+Norte;Pará ;1154,585462;2016
+Norte;Amapá;151,53769;2016
+Norte;Tocantins ;363,55829;2016
+Nordeste;Maranhão ;928,346354;2016
+Nordeste;Piauí ;596,027063;2016
+Nordeste;Ceará ;1372,176486;2016
+Nordeste;Rio Grande do Norte ;651,680245;2016
+Nordeste;Paraíba ;694,589697;2016
+Nordeste;Pernambuco;1441,149787;2016
+Nordeste;Alagoas;453,962274;2016
+Nordeste;Sergipe;398,251993;2016
+Nordeste;Bahia;2210,592757;2016
+Sudeste;Minas Gerais;4512,741376;2016
+Sudeste;Espírito Santo;947,149013;2016
+Sudeste;Rio de Janeiro;2684,90352;2016
+Sudeste;São Paulo;9990,516458;2016
+Sul ;Paraná ;2881,573091;2016
+Sul ;Santa Catarina;2700,772289;2016
+Sul ;Rio Grande do Sul ;3463,356223;2016
+Centro-Oeste;Mato Grosso do Sul ;741,872019;2016
+Centro-Oeste;Mato Grosso;616,554183;2016
+Centro-Oeste;Goiás;1531,089096;2016
+Centro-Oeste;Distrito Federal ;1199,5887;2016
+Norte;Rondônia ;436,154441;2017
+Norte;Acre ;136,59256;2017
+Norte;Amazonas ;644,424523;2017
+Norte;Roraima ;137,423769;2017
+Norte;Pará ;1154,05816;2017
+Norte;Amapá;154,728341;2017
+Norte;Tocantins ;379,334976;2017
+Nordeste;Maranhão ;955,006366;2017
+Nordeste;Piauí ;607,778964;2017
+Nordeste;Ceará ;1381,639086;2017
+Nordeste;Rio Grande do Norte ;661,020141;2017
+Nordeste;Paraíba ;713,021851;2017
+Nordeste;Pernambuco;1494,982013;2017
+Nordeste;Alagoas;455,660703;2017
+Nordeste;Sergipe;401,427899;2017
+Nordeste;Bahia;2251,13571;2017
+Sudeste;Minas Gerais;4570,210878;2017
+Sudeste;Espírito Santo;937,560443;2017
+Sudeste;Rio de Janeiro;2522,844538;2017
+Sudeste;São Paulo;10472,11333;2017
+Sul ;Paraná ;3065,37017;2017
+Sul ;Santa Catarina;2807,016351;2017
+Sul ;Rio Grande do Sul ;3594,255279;2017
+Centro-Oeste;Mato Grosso do Sul ;766,623339;2017
+Centro-Oeste;Mato Grosso;623,823978;2017
+Centro-Oeste;Goiás;1559,199289;2017
+Centro-Oeste;Distrito Federal ;1266,124914;2017
+Norte;Rondônia ;427,769572;2018
+Norte;Acre ;133,872324;2018
+Norte;Amazonas ;614,179327;2018
+Norte;Roraima ;140,968558;2018
+Norte;Pará ;1136,547735;2018
+Norte;Amapá;158,010198;2018
+Norte;Tocantins ;348,974009;2018
+Nordeste;Maranhão ;943,358348;2018
+Nordeste;Piauí ;557,661833;2018
+Nordeste;Ceará ;1329,769109;2018
+Nordeste;Rio Grande do Norte ;608,089124;2018
+Nordeste;Paraíba ;637,788087;2018
+Nordeste;Pernambuco;1311,137666;2018
+Nordeste;Alagoas;417,718713;2018
+Nordeste;Sergipe;370,116044;2018
+Nordeste;Bahia;2010,769645;2018
+Sudeste;Minas Gerais;3572,714948;2018
+Sudeste;Espírito Santo;909,645075;2018
+Sudeste;Rio de Janeiro;2001,603031;2018
+Sudeste;São Paulo;8425,692442;2018
+Sul ;Paraná ;2535,773936;2018
+Sul ;Santa Catarina;2750,212923;2018
+Sul ;Rio Grande do Sul ;3461,000803;2018
+Centro-Oeste;Mato Grosso do Sul ;712,686886;2018
+Centro-Oeste;Mato Grosso;521,857271;2018
+Centro-Oeste;Goiás;1223,071022;2018
+Centro-Oeste;Distrito Federal ;1090,790633;2018
+Norte;Rondônia ;440,066883;2019
+Norte;Acre ;138,001402;2019
+Norte;Amazonas ;647,740531;2019
+Norte;Roraima ;153,67613;2019
+Norte;Pará ;1176,565934;2019
+Norte;Amapá;170,073113;2019
+Norte;Tocantins ;365,4022;2019
+Nordeste;Maranhão ;949,378146;2019
+Nordeste;Piauí ;560,883723;2019
+Nordeste;Ceará ;1385,259814;2019
+Nordeste;Rio Grande do Norte ;620,525147;2019
+Nordeste;Paraíba ;653,092791;2019
+Nordeste;Pernambuco;1367,866545;2019
+Nordeste;Alagoas;437,071223;2019
+Nordeste;Sergipe;380,080416;2019
+Nordeste;Bahia;2043,682942;2019
+Sudeste;Minas Gerais;3300,67172;2019
+Sudeste;Espírito Santo;932,664148;2019
+Sudeste;Rio de Janeiro;2033,178936;2019
+Sudeste;São Paulo;7947,691132;2019
+Sul ;Paraná ;2514,962032;2019
+Sul ;Santa Catarina;2885,318418;2019
+Sul ;Rio Grande do Sul ;3553,480336;2019
+Centro-Oeste;Mato Grosso do Sul ;768,148201;2019
+Centro-Oeste;Mato Grosso;475,309092;2019
+Centro-Oeste;Goiás;1141,131395;2019
+Centro-Oeste;Distrito Federal ;1123,11442;2019
