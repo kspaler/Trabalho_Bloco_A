@@ -1,4 +1,4 @@
-setwd("C:/Users/felip/OneDrive/feliped16/OneDrive/PosGraduação BigData/Bloco A - Analítico e estudo de caso/Trabalho Petroleo-Gasolina")
+setwd("E:/Estudos/Trabalho_Bloco_A")
 getwd()
 
 library(dplyr)
@@ -226,7 +226,7 @@ names(df_ipca)[3] <- "Mes_Anterior"
 names(df_ipca)[4] <- "IPCA_Mes"
 names(df_ipca)[5] <- "Ano"
 names(df_ipca)[6] <- "12_meses"
-names(df_ipca)[8] <- "Sigla_Regiao"
+names(df_ipca)[8] <- "Sigla_regiao"
 
 View(df_ipca)
 
@@ -236,26 +236,52 @@ df_ipca$Data<- as.character(df_ipca$Data)
 
 distinct(df_ipca,Regiao)
 
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Aracaju']<- 'NE'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'São Luís']<- 'NE'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Rio Branco']<- 'N'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Salvador']<- 'NE'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Belém']<- 'N'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Rio de Janeiro']<- 'SE'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Brasília']<- 'CO'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Porto Alegre']<- 'S'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Recife']<- 'NE'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Campo Grande']<- 'CO'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'São Paulo']<- 'SE'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Belo Horizonte']<- 'SE'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Vitória']<- 'SE'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Goiânia']<- 'CO'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Curitiba']<- 'S'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Brasil']<- 'BR'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Fortaleza']<- 'NE'
-df_ipca["Sigla_Regiao"][df_ipca["Regiao"] == 'Grande Vitória']<- 'SE'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Aracaju']<- 'NE'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'São Luís']<- 'NE'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Rio Branco']<- 'N'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Salvador']<- 'NE'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Belém']<- 'N'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Rio de Janeiro']<- 'SE'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Brasília']<- 'CO'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Porto Alegre']<- 'S'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Recife']<- 'NE'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Campo Grande']<- 'CO'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'São Paulo']<- 'SE'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Belo Horizonte']<- 'SE'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Vitória']<- 'SE'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Goiânia']<- 'CO'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Curitiba']<- 'S'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Brasil']<- 'BR'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Fortaleza']<- 'NE'
+df_ipca["Sigla_regiao"][df_ipca["Regiao"] == 'Grande Vitória']<- 'SE'
 
 df_ipca$mes<-substr(df_ipca$Data,1,7)
+
+View(df_ipca)
+
+df_ipca%>%filter(mes == '2020-03')%>%summarize(Regiao,PesoRegional)
+
+df_ipca%>%filter(Regiao == 'Vitória')%>%summarize(mes,PesoRegional)
+
+
+#completa os pesos regionais n�o existentes
+df_ipca$PesoRegional[df_ipca$Regiao == "São Paulo" & is.na(df_ipca$PesoRegional)] <-32.3
+df_ipca$PesoRegional[df_ipca$Regiao == "Porto Alegre" & is.na(df_ipca$PesoRegional)] <-8.61
+df_ipca$PesoRegional[df_ipca$Regiao == "Brasília" & is.na(df_ipca$PesoRegional)] <-4.06
+df_ipca$PesoRegional[df_ipca$Regiao == "Belém" & is.na(df_ipca$PesoRegional)] <-3.94
+df_ipca$PesoRegional[df_ipca$Regiao == "Rio Branco" & is.na(df_ipca$PesoRegional)] <-0.51
+df_ipca$PesoRegional[df_ipca$Regiao == "Belo Horizonte" & is.na(df_ipca$PesoRegional)] <-9.69
+df_ipca$PesoRegional[df_ipca$Regiao == "Grande Vitória" & is.na(df_ipca$PesoRegional)] <-1.86
+df_ipca$PesoRegional[df_ipca$Regiao == "Goiânia" & is.na(df_ipca$PesoRegional)] <-4.17
+df_ipca$PesoRegional[df_ipca$Regiao == "Salvador" & is.na(df_ipca$PesoRegional)] <-5.99
+df_ipca$PesoRegional[df_ipca$Regiao == "Fortaleza" & is.na(df_ipca$PesoRegional)] <-3.23
+df_ipca$PesoRegional[df_ipca$Regiao == "Recife" & is.na(df_ipca$PesoRegional)] <-3.92
+df_ipca$PesoRegional[df_ipca$Regiao == "São Luís" & is.na(df_ipca$PesoRegional)] <-1.62
+df_ipca$PesoRegional[df_ipca$Regiao == "Aracaju" & is.na(df_ipca$PesoRegional)] <-1.03
+df_ipca$PesoRegional[df_ipca$Regiao == "Rio de Janeiro" & is.na(df_ipca$PesoRegional)] <-9.43
+df_ipca$PesoRegional[df_ipca$Regiao == "Campo Grande" & is.na(df_ipca$PesoRegional)] <-1.57
+df_ipca$PesoRegional[df_ipca$Regiao == "Curitiba" & is.na(df_ipca$PesoRegional)] <-8.09
+df_ipca$PesoRegional[df_ipca$Regiao == "Brasil" & is.na(df_ipca$PesoRegional)] <-32.3
 
 View(df_ipca)
 
@@ -263,6 +289,73 @@ df_ipca2<-df_ipca[-c(1,3,5,6,7)]
 
 View(df_ipca2)
 
-df_ipca3=df_ipca2%>%group_by(Sigla_Regiao,PesoRegional,mes)%>%summarize(mediaIpcaMes=mean(IPCA_Mes),medianaIpcaMes=median(IPCA_Mes))
+df_ipca3=df_ipca2%>%group_by(Sigla_regiao,PesoRegional,mes)%>%summarize(mediaIpcaMes=mean(IPCA_Mes),medianaIpcaMes=median(IPCA_Mes))
 
 View(df_ipca3)
+
+df_ipca3%>%group_by()%>%summarize(sum(PesoRegional))
+
+
+df_ipca3%>%distinct(Sigla_regiao)
+
+
+df_ipca3$Sigla_regiao<- as.character(df_ipca3$Sigla_regiao)
+
+distinct(df_ipca,Regiao)
+
+unique(df_ipca3$Sigla_regiao)
+
+distinct(df_ipca3,Sigla_regiao)
+
+df_ipca4 <- data.frame(matrix(ncol = 4, nrow = 0))
+
+names(df_ipca4)[1] <- "Regiao"
+names(df_ipca4)[2] <- "mes"
+names(df_ipca4)[3] <- "IPCA_Mes"
+names(df_ipca4)[4] <- "Ano"
+
+
+str(df_ipca4)
+
+for (reg in unique(df_ipca3$Sigla_regiao))
+{
+   for (month in unique(df_ipca3$mes) )
+   {
+      
+      df_tmp<-df_ipca3%>%filter(mes == month & Sigla_regiao == reg)
+      
+      PesoTotal<-df_tmp%>%group_by()%>%summarize(sum(PesoRegional))
+      
+      SomaMediaPonderada=0
+      SomaMedianaPonderada=0
+      
+      for (i in 1:nrow(df_tmp))
+      {
+         SomaMediaPonderada=df_tmp[i,]$PesoRegional*df_tmp[i,]$mediaIpcaMes
+         SomaMedianaPonderada=df_tmp[i,]$PesoRegional*df_tmp[i,]$medianaIpcaMes
+         
+      }
+      
+      df_tmp2 <- data.frame(reg,month,SomaMediaPonderada/PesoTotal,SomaMedianaPonderada/PesoTotal)
+      
+      #tratamento para primeira linha não alterar nome das colunas
+      df_ipca4 <- rbind(df_ipca4,setNames(df_tmp2, names(df_ipca4)))
+      
+      #df_ipca4 <- rbind(df_ipca4,c(Sigla_regiao,mes,mediaIpcaMes,medianaIpcaMes))
+      
+      # x=sprintf("%s,%s",reg,month)
+      # print(x)
+   }
+}
+
+warnings()
+
+View(df_ipca4)
+
+str(df_ipca4)
+
+warnings()
+
+df_ipca3%>%filter(Sigla_regiao =='CO' & mes == '2020-03')%>%group_by%>%summarize(sum(PesoRegional))
+
+
