@@ -5,6 +5,7 @@ library(dplyr)
 library(rJava)
 library(readxl)
 library(tidyr) #adc por felipe para transpor a coluna em varias colunas
+library(ggplot2)
 
 
 #CARREGA IMPOSTOS
@@ -62,7 +63,7 @@ distinct(df_impostos3,Sigla_regiao)
 
 #CARREGA COTAÇÃO DO DOLAR
 
-df_dolar <-read.csv("CotaçãoDolar/USD_BRL_Dados_Historicos.csv")
+df_dolar <-read.csv("USD_BRL_Dados_Historicos.csv")
 
 names(df_dolar)[1] <- "DataCotacao"
 names(df_dolar)[2] <- "Ultimo"
@@ -99,7 +100,7 @@ df_brent <-read_excel("BarrilPetroleo/RBRTEd.xls", sheet = 2)
 df_brent=df_brent[-c(1,2),]
 
 names(df_brent)[1] <- "DataCotacao"
-names(df_brent)[2] <- "ValorEmDolar"
+names(df_brent)[2] <- "ValorBrentEmDolar"
 
 #converte as datas que vieram em dias deste 01/01/1900 
 df_brent <- df_brent%>% mutate(DataCotacao = as.Date(as.numeric(as.character(DataCotacao)), origin = "1900-01-01"))
@@ -115,7 +116,7 @@ View(df_brent)
 #retira meses a mais
 df_brent<-df_brent%>%filter(mes<'2020-08' & mes>'2018-06')
 
-df_brent$ValorEmDolar<-as.numeric(df_brent$ValorEmDolar)
+df_brent$ValorBrentEmDolar<-as.numeric(df_brent$ValorBrentEmDolar)
 
 
 View(df_brent)
@@ -125,7 +126,7 @@ df_dolar_brent<-merge(df_brent,df_dolar2,by="DataCotacao")
 
 head(df_dolar_brent)
 
-df_dolar_brent$ValorBrentReais=df_dolar_brent$ValorEmDolar*df_dolar_brent$Ultimo
+df_dolar_brent$ValorBrentReais=df_dolar_brent$ValorBrentEmDolar*df_dolar_brent$Ultimo
 
 #retira a coluna de data
 df_dolar_brent2=df_dolar_brent[-c(1)]#Alterado Felipe
@@ -135,12 +136,14 @@ View(df_dolar_brent2)
 names(df_dolar_brent2)[3] <- "CotacaoDolar" #Alterado Felipe
 names(df_dolar_brent2)[4] <- "CotacaoBrentReais" #Alterado Felipe
 #Alterado Felipe
-df_dolar_brent3<-df_dolar_brent2%>%group_by(mes)%>%summarize(CotacaoDolar=mean(CotacaoDolar),CotacaoBrentReais=mean(CotacaoBrentReais),ValorEmDolar=mean(ValorEmDolar))
+df_dolar_brent3<-df_dolar_brent2%>%group_by(mes)%>%summarize(CotacaoDolar=mean(CotacaoDolar),CotacaoBrentReais=mean(CotacaoBrentReais),ValorBrentEmDolar=mean(ValorBrentEmDolar))
 
 View(df_dolar_brent3)
 
 #Alteração Felipe -------------------------------------
 df_imp_dolar_brent<-merge(df_dolar_brent3,df_impostos3,by="mes")
+
+View(df_imp_dolar_brent)
 
 #Primeiramente vou gerar um novo dataset filtrando apenas o Brasil para analise (sem levar em consideração por região)
 df_imp_dolar_brent_brasil <- subset(df_imp_dolar_brent, Sigla_regiao== 'BR')
@@ -335,10 +338,10 @@ distinct(df_ipca3,Sigla_regiao)
 
 df_ipca4 <- data.frame(matrix(ncol = 4, nrow = 0))
 
-names(df_ipca4)[1] <- "Regiao"
+names(df_ipca4)[1] <- "Sigla_regiao"
 names(df_ipca4)[2] <- "mes"
-names(df_ipca4)[3] <- "IPCA_Mes"
-names(df_ipca4)[4] <- "Ano"
+names(df_ipca4)[3] <- "MediaIPCAMes"
+names(df_ipca4)[4] <- "MedianaIPCAMes"
 
 
 str(df_ipca4)
@@ -374,14 +377,25 @@ for (reg in unique(df_ipca3$Sigla_regiao))
    }
 }
 
-warnings()
 
 View(df_ipca4)
 
 str(df_ipca4)
 
-warnings()
 
-df_ipca3%>%filter(Sigla_regiao =='CO' & mes == '2020-03')%>%group_by%>%summarize(sum(PesoRegional))
+#cria dataframe final
+df_final <- df_imp_dolar_brent %>% inner_join(df_ipca4, by=c("mes","Sigla_regiao"))
 
+
+
+View(df_final)
+
+
+write.csv(df_final, "df_final.csv")
+
+#carrega dataframe final
+
+df_total <- read.csv("df_final.csv")
+
+View(df_total)
 
