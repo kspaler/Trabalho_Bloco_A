@@ -4,6 +4,10 @@ getwd()
 library(dplyr)
 library(tidyr) #adc por felipe para transpor a coluna em varias colunas
 library(ggplot2)
+#install.packages("viridis")
+library(viridis)
+#install.packages("patchwork")
+library(patchwork) # Mostrar dois gráficos ao lado
 
 
 df_total <- read.csv("df_final.csv")
