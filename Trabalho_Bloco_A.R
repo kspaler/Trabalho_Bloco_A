@@ -6,6 +6,9 @@ library(rJava)
 library(readxl)
 library(tidyr) #adc por felipe para transpor a coluna em varias colunas
 library(ggplot2)
+library(Rfast)
+
+install.packages('Rfast')
 
 
 #CARREGA IMPOSTOS
@@ -397,5 +400,18 @@ write.csv(df_final, "df_final.csv")
 
 df_total <- read.csv("df_final.csv")
 
+str(df_total)
+
+#calcula preço médio da gasolina na bomba
+df_total<-df_total %>%
+  mutate(mediaGasolinaBomba = select(.,7:12) %>% rowSums(na.rm = TRUE))
+
+#calcula preço por mediana da gasolina na bomba
+df_total<-df_total %>%
+  mutate(medianaGasolinaBomba = select(.,13:18) %>% rowSums(na.rm = TRUE))
+
+
 View(df_total)
 
+write.csv(df_total, "df_final.csv")
+     
