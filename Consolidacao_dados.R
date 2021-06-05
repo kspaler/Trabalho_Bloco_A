@@ -371,6 +371,8 @@ df_total <- read.csv("df_final.csv")
 
 str(df_total)
 
+df_total=df_total[-c(1,2)]
+
 #calcula preço médio da gasolina na bomba
 df_total<-df_total %>%
   mutate(mediaGasolinaBomba = select(.,7:12) %>% rowSums(na.rm = TRUE))
