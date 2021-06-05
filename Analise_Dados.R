@@ -67,11 +67,22 @@ ggplot(subset(df_media, Sigla_regiao== 'BR'), aes(x=mes)) +
 
 
 #outro tipo de plot múltiplo
-df <- subset(df_media, Sigla_regiao== 'BR') %>%
-   select(mes, CotacaoDolar, CotacaoBrentReais,mediaDistrTransporte,mediaRevenda,mediaPrecoEtanol,mediaPrecoGasolina,mediaTribEstadual,mediaTribEstadual,mediaTribFederal,MediaIPCAMes,mediaGasolinaBomba) %>%
-   gather(key = "variable", value = "value", -mes)
+#Transpor o dataframe de colunas para linhas
+df <- df_media%>%
+  select(mes, Sigla_regiao, CotacaoDolar, CotacaoBrentReais,mediaDistrTransporte,mediaRevenda,mediaPrecoEtanol,mediaPrecoGasolina,mediaTribEstadual,mediaTribEstadual,mediaTribFederal,MediaIPCAMes,mediaGasolinaBomba) %>%
+  gather(key = "variable", value = "value", -mes,-Sigla_regiao)
 
 View(df)
+#Mescla colunas regiao e impostos/cotacao/brent(variable)
+df$Regiao_variable <- paste(df$Sigla_regiao,df$variable)
+
+#eliminar linhas repetidas de cotacao/brent(reais e dolar)
+df<- df%>%filter(
+  Regiao_variable != 'SE CotacaoDolar' & Regiao_variable != 'SE CotacaoBrentReais' & Regiao_variable != 'SE ValorEmDolar'&
+  Regiao_variable != 'S CotacaoDolar' & Regiao_variable != 'S CotacaoBrentReais' & Regiao_variable != 'S ValorEmDolar'&
+  Regiao_variable != 'NE CotacaoDolar' & Regiao_variable != 'NE CotacaoBrentReais' & Regiao_variable != 'NE ValorEmDolar'&
+  Regiao_variable != 'CO CotacaoDolar' & Regiao_variable != 'CO CotacaoBrentReais' & Regiao_variable != 'CO ValorEmDolar'&
+  Regiao_variable != 'N CotacaoDolar' & Regiao_variable != 'N CotacaoBrentReais' & Regiao_variable != 'N ValorEmDolar')
 
 ggplot(df, aes(x = mes, y = value)) + 
    geom_line(aes(color = variable, size=2)) + 
@@ -140,4 +151,12 @@ linhaGasolinaBomba <- ggplot(data=df_media, aes(x=mes, color = Sigla_regiao,y = 
 linhaGasolinaBomba
 
 
+#Grafico media gasolina por região vs cotacao dolar
+df<- df%>%filter(variable == 'CotacaoDolar' | variable == 'mediaGasolinaBomba')
+linhaGasolinaBomba <- ggplot(data=df, aes(x = mes, color = Regiao_variable,y = value, group=Regiao_variable)) +
+  geom_line(size=1) +
+  ggtitle("Cotação dólar 2018-07 até 2020-07") +
+  ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+linhaGasolinaBomba
 
