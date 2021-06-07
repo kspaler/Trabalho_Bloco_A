@@ -7,8 +7,9 @@ library(readxl)
 library(tidyr) #adc por felipe para transpor a coluna em varias colunas
 library(ggplot2)
 library(Rfast)
+library(tidyverse)
 
-install.packages('Rfast')
+#install.packages('Rfast')
 
 
 #CARREGA IMPOSTOS
@@ -384,5 +385,96 @@ df_total<-df_total %>%
 
 View(df_total)
 
-write.csv(df_total, "df_final.csv")
+write.csv(df_total, "df_final.csv",row.names=FALSE)
+
+#novos dados
      
+
+#PIM
+
+df_pim_pf <-read_excel("PIM_PF.xlsx", sheet = 1)
+
+View(df_pim_pf)
+
+
+#dropa lixo das primeiras 3 linhas
+df_pim_pf=df_pim_pf[-c(1,2,3),]
+
+df_pim_pf=df_pim_pf[-c(26),]
+
+df_pim_pf=df_pim_pf[-c(2)]
+
+names(df_pim_pf)[1] <- "Data"
+names(df_pim_pf)[2] <- "PIM"
+
+
+#trata a data para ser igual as outras
+df_pim_pf<-df_pim_pf %>% 
+  mutate(Data = str_replace_all(Data, c("janeiro" = "01 01","fevereiro" = "01 02","março" = "01 03","abril" = "01 04","maio"="01 05","junho"="01 06","julho"="01 07","agosto"="01 08","setembro"="01 09","outubro"="01 10","novembro"="01 11","dezembro"="01 12")))
+
+
+df_pim_pf$Data <- strptime(df_pim_pf$Data, format= "%d %m %Y")
+
+format(df_pim_pf$Data, format="%Y-%m-%d")
+
+df_pim_pf$Data<- as.character(df_pim_pf$Data)
+
+df_pim_pf$mes<-substr(df_pim_pf$Data,1,7)
+
+df_pim_pf=df_pim_pf[-c(1)]
+
+
+#Estoque de Empregos Formais
+
+df_EEF <- read.csv2("Estoque_Empregos_Formais.csv")
+
+View(df_EEF)
+
+df_EEF=df_EEF[-c(26),]
+
+
+names(df_EEF)[2] <- "Estoque_Empregos"
+
+df_EEF$Data <- strptime(paste('01',df_EEF$Data, sep="/"), format= "%d/%m/%Y")
+
+format(df_EEF$Data, format="%Y-%m-%d")
+
+df_EEF$Data<- as.character(df_EEF$Data)
+
+df_EEF$mes<-substr(df_EEF$Data,1,7)
+
+df_EEF=df_EEF[-c(1)]
+
+
+#CDI
+
+df_cdi <-read.csv("CDI.csv",sep = "\t",dec = ",")
+
+View(df_cdi)
+
+names(df_cdi)[2] <- "N.Operacoes"
+names(df_cdi)[4] <- "Media"
+names(df_cdi)[5] <- "Fator.Diario"
+
+
+df_cdi$Data <- strptime(df_cdi$Data, format= "%d/%m/%Y")
+format(df_cdi$Data, format="%Y-%m-%d")
+
+df_cdi$Data<- as.character(df_cdi$Data)
+
+df_cdi$mes<-substr(df_cdi$Data,1,7)
+
+df_cdi2=df_cdi[-c(1,2,3,5,6)]
+
+View(df_cdi2)
+
+
+df_cdi3=df_cdi2%>%group_by(mes)%>%summarize(mediaCDI=mean(Media))
+
+View(df_cdi3)
+
+
+
+
+
+
