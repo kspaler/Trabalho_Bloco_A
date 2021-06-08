@@ -364,7 +364,7 @@ df_final <- df_imp_dolar_brent %>% inner_join(df_ipca4, by=c("mes","Sigla_regiao
 View(df_final)
 
 
-write.csv(df_final, "df_final.csv")
+write.csv(df_final, "df_final.csv",row.names=FALSE)
 
 #carrega dataframe final
 
@@ -372,7 +372,7 @@ df_total <- read.csv("df_final.csv")
 
 str(df_total)
 
-df_total=df_total[-c(1,2)]
+df_total=df_total[-1]
 
 #calcula preço médio da gasolina na bomba
 df_total<-df_total %>%
@@ -423,6 +423,10 @@ df_pim_pf$mes<-substr(df_pim_pf$Data,1,7)
 
 df_pim_pf=df_pim_pf[-c(1)]
 
+df_total2 <- df_total %>% inner_join(df_pim_pf, by=c("mes"))
+
+View(df_total2)
+
 
 #Estoque de Empregos Formais
 
@@ -444,6 +448,10 @@ df_EEF$Data<- as.character(df_EEF$Data)
 df_EEF$mes<-substr(df_EEF$Data,1,7)
 
 df_EEF=df_EEF[-c(1)]
+
+df_total3 <- df_total2 %>% inner_join(df_EEF, by=c("mes"))
+
+View(df_total3)
 
 
 #CDI
@@ -473,8 +481,36 @@ df_cdi3=df_cdi2%>%group_by(mes)%>%summarize(mediaCDI=mean(Media))
 
 View(df_cdi3)
 
+df_total4 <- df_total3 %>% inner_join(df_cdi3, by=c("mes"))
 
+View(df_total4)
 
+#IBC
 
+df_ibc<-read.csv("IBC.csv",sep = ";",dec = ",")
+
+View(df_ibc)
+
+df_ibc=df_ibc[-c(26),]
+
+names(df_ibc)[2] <- "IBC"
+
+df_ibc$Data <- strptime(paste('01',df_ibc$Data, sep="/"), format= "%d/%m/%Y")
+
+format(df_ibc$Data, format="%Y-%m-%d")
+
+df_ibc$Data<- as.character(df_ibc$Data)
+
+df_ibc$mes<-substr(df_ibc$Data,1,7)
+
+df_ibc=df_ibc[-c(1)]
+
+df_total5 <- df_total4 %>% inner_join(df_ibc, by=c("mes"))
+
+View(df_total5)
+
+write.csv(df_total5, "df_final.csv",row.names=FALSE)
+
+#Massa de rendimento
 
 
