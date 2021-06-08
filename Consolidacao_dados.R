@@ -10,6 +10,7 @@ library(Rfast)
 library(tidyverse)
 
 #install.packages('Rfast')
+#install.packages('quanteda')
 
 
 #CARREGA IMPOSTOS
@@ -513,4 +514,60 @@ write.csv(df_total5, "df_final.csv",row.names=FALSE)
 
 #Massa de rendimento
 
+df_total5 <- read.csv("df_final.csv")
+
+View(df_total5)
+
+df_mr <-read_excel("MassaRendimento.xlsx", sheet = 1)
+
+View(df_mr_transpose)
+
+df_mr=df_mr[-c(1,2,5),]
+
+
+df_mr_transpose <- as.data.frame(t(as.matrix(df_mr)))
+
+
+names(df_mr_transpose)[1] <- "Data"
+names(df_mr_transpose)[2] <- "MassaRendimento"
+
+df_mr_transpose=df_mr_transpose[-c(1),]
+
+
+str(df_mr_transpose)
+
+head(df_mr_transpose)
+
+df_mr_transpose$Data2
+
+
+strsplit(as.character(df_mr_transpose$Data[1]), "-")[[1]][3]
+
+?strsplit
+
+
+df_mr_transpose$Data2<-lapply(df_mr_transpose$Data, function(x){
+  #mean.pl <- mean(x$petal.length)
+  Data2<-strsplit(as.character(x), "-")[[1]][3]
+})
+
+df_mr_transpose<-df_mr_transpose %>% 
+  mutate(Data2= str_replace_all(Data2, c("jan" = "01 01","fev" = "01 02","mar" = "01 03","abr" = "01 04","mai"="01 05","jun"="01 06","jul"="01 07","ago"="01 08","set"="01 09","out"="01 10","nov"="01 11","dez"="01 12")))
+
+df_mr_transpose$Data2 <- strptime(df_mr_transpose$Data2, format= "%d %m %Y")
+
+format(df_mr_transpose$Data2, format="%Y-%m-%d")
+
+df_mr_transpose$Data2<- as.character(df_mr_transpose$Data2)
+
+df_mr_transpose$mes<-substr(df_mr_transpose$Data2,1,7)
+
+df_mr_transpose=df_mr_transpose[-c(1,3)]
+
+df_total6 <- df_total5 %>% inner_join(df_mr_transpose, by=c("mes"))
+
+View(df_total6)
+
+
+write.csv(df_total, "df_final.csv",row.names=FALSE)
 
