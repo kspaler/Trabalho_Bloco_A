@@ -1,4 +1,4 @@
-setwd("E:/Estudos/Trabalho_Bloco_A")
+setwd("C:/Users/felip/OneDrive/feliped16/OneDrive/PosGraduação BigData/Bloco A - Analítico e estudo de caso/Trabalho Petroleo-Gasolina/GitHub Projeto/Trabalho_Bloco_A")
 getwd()
 
 library(dplyr)
@@ -10,6 +10,10 @@ library(viridis)
 library(patchwork) # Mostrar dois gráficos ao lado
 library(modelr)
 #library(tidyverse)
+library(corrplot)
+#install.packages("corrplot")
+library(psych)
+#install.packages("psych")
 
 
 df_total <- read.csv("df_final.csv")
@@ -17,15 +21,15 @@ View(df_total)
 
 str(df_total)
 
-#Tira os valores de média
-df_media=df_total[c(2,6,3,4,5,7,8,9,10,11,12,19,21)]
+#mantem os valores de média
+df_media=df_total[c(1,2,3,4,5,6,7,8,9,10,11,22,23,24)]
 
 str(df_media)
 
 View(df_media)
 
-#Tira os valores de mediana
-df_mediana=df_total[c(2,6,3,4,5,13,14,15,16,17,18,20,22)]
+#Mantém os valores de mediana
+df_mediana=df_total[c(1,2,3,4,5,12,13,14,15,16,17,18,19,20,21,22,23,24,25)]
 str(df_mediana)
 
 
@@ -52,24 +56,11 @@ summary(df_total, maxsum = max(lengths(lapply(df_total, unique))))
 
 colors()
 
-#um tipo de plot múltiplo
-ggplot(subset(df_media, Sigla_regiao== 'BR'), aes(x=mes)) + 
-   geom_line(aes(y = CotacaoDolar), color = "darkred",group = 1) +
-   geom_line(aes(y = CotacaoBrentReais  ), color="steelblue",group = 1) +
-   geom_line(aes(y = mediaDistrTransporte  ), color="seagreen",group = 1) +
-   geom_line(aes(y = mediaRevenda  ), color="purple",group = 1) +
-   geom_line(aes(y = mediaPrecoEtanol  ), color="pink1",group = 1) +
-   geom_line(aes(y = mediaPrecoGasolina  ), color="maroon",group = 1) + 
-   geom_line(aes(y = mediaTribEstadual  ), color="honeydew2",group = 1) +
-   geom_line(aes(y = mediaTribFederal  ), color="grey22",group = 1) +
-   geom_line(aes(y = MediaIPCAMes  ), color="aquamarine",group = 1) +
-   geom_line(aes(y = mediaGasolinaBomba  ), color="brown4",group = 1)
 
 
-#outro tipo de plot múltiplo
 #Transpor o dataframe de colunas para linhas
-df <- df_media%>%
-  select(mes, Sigla_regiao, CotacaoDolar, CotacaoBrentReais,mediaDistrTransporte,mediaRevenda,mediaPrecoEtanol,mediaPrecoGasolina,mediaTribEstadual,mediaTribEstadual,mediaTribFederal,MediaIPCAMes,mediaGasolinaBomba) %>%
+df <- df_mediana%>%
+  select(mes, Sigla_regiao, CotacaoDolar, CotacaoBrentReais,medianaDistrTransporte,medianaRevenda,medianaPrecoEtanol,medianaPrecoGasolina,medianaTribEstadual,medianaTribEstadual,medianaTribFederal,MedianaIPCAMes,medianaGasolinaBomba) %>%
   gather(key = "variable", value = "value", -mes,-Sigla_regiao)
 
 View(df)
@@ -79,22 +70,14 @@ df$Regiao_variable <- paste(df$Sigla_regiao,df$variable)
 #eliminar linhas repetidas de cotacao/brent(reais e dolar)
 df<- df%>%filter(
   Regiao_variable != 'SE CotacaoDolar' & Regiao_variable != 'SE CotacaoBrentReais' & Regiao_variable != 'SE ValorEmDolar'&
-  Regiao_variable != 'S CotacaoDolar' & Regiao_variable != 'S CotacaoBrentReais' & Regiao_variable != 'S ValorEmDolar'&
-  Regiao_variable != 'NE CotacaoDolar' & Regiao_variable != 'NE CotacaoBrentReais' & Regiao_variable != 'NE ValorEmDolar'&
-  Regiao_variable != 'CO CotacaoDolar' & Regiao_variable != 'CO CotacaoBrentReais' & Regiao_variable != 'CO ValorEmDolar'&
-  Regiao_variable != 'N CotacaoDolar' & Regiao_variable != 'N CotacaoBrentReais' & Regiao_variable != 'N ValorEmDolar')
-
-ggplot(df, aes(x = mes, y = value)) + 
-   geom_line(aes(color = variable, size=2)) + 
-   scale_color_manual(values = c("darkred", "steelblue","seagreen","purple","pink1","maroon","honeydew2","grey22","aquamarine","brown4"))
+    Regiao_variable != 'S CotacaoDolar' & Regiao_variable != 'S CotacaoBrentReais' & Regiao_variable != 'S ValorEmDolar'&
+    Regiao_variable != 'NE CotacaoDolar' & Regiao_variable != 'NE CotacaoBrentReais' & Regiao_variable != 'NE ValorEmDolar'&
+    Regiao_variable != 'CO CotacaoDolar' & Regiao_variable != 'CO CotacaoBrentReais' & Regiao_variable != 'CO ValorEmDolar'&
+    Regiao_variable != 'N CotacaoDolar' & Regiao_variable != 'N CotacaoBrentReais' & Regiao_variable != 'N ValorEmDolar')
 
 
 
-View(df)
 
-?gather
-
-plot()
 
 #Primeiramente vou gerar um novo dataset filtrando apenas o Brasil para analise (sem levar em consideração por região)
 df_total_brasil <- subset(df_total, Sigla_regiao== 'BR')
@@ -104,59 +87,81 @@ View(df_total_brasil)
 str(df_total_brasil)
 
 
-#Após feito a junção dos dados em um único dataset, será plotado algumas visões
 
-#Gráfico da variação do dolar e do barril de petroleo (brent)
-linhaDolar <- ggplot(data=df_total_brasil, aes(x=mes)) +
-   geom_line(aes(y = CotacaoDolar, group=1), color = "darkred", size=2)+
-   ggtitle("Cotação dólar 2018-07 até 2020-07") +
-   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-linhaBrent <- ggplot(data=df_total_brasil, aes(x=mes)) +
-   geom_line(aes(y = CotacaoBrentReais, group=2), color = "steelblue", size=2)+
-   ggtitle("Cotação Barril em Real 2018-07 até 2020-07") +
-   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))  
-
-linhaDolar+linhaBrent
-
-
-#gráfico da variação do preço da gasolina pelo produtor
-linhaVarProdutor <- ggplot(data=df_total_brasil, aes(x=mes)) +
-   geom_line(aes(y = mediaPrecoGasolina, group=1), color = "darkred", size=2)+
-   ggtitle("Preço produtor gasolina 2018-07 até 2020-07") +
-   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-linhaDolar+linhaBrent+linhaVarProdutor
 
 
 str(df_media)
 
 linhaGasolinaBomba <- ggplot(data=df_media, aes(x=mes, color = Sigla_regiao,y = mediaGasolinaBomba, group=Sigla_regiao)) +
-   geom_line(size=1) +
-   ggtitle("Cotação dólar 2018-07 até 2020-07") +
-   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
-   
+  geom_line(size=1) +
+  ggtitle("Cotação dólar 2018-07 até 2020-07") +
+  ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
 
 linhaGasolinaBomba
 
 View(df_media)
 
 
-linhaGasolinaBomba <- ggplot(data=df_media, aes(x=mes, color = Sigla_regiao,y = mediaGasolinaBomba, group=Sigla_regiao)) +
-   geom_line(size=1) +
-   ggtitle("Cotação dólar 2018-07 até 2020-07") +
-   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+
-   geom_line(aes(y = CotacaoDolar), color = "darkred",group = 1,size=2)
+# linhaGasolinaBomba <- ggplot(data=df_media, aes(x=mes, color = Sigla_regiao,y = mediaGasolinaBomba, group=Sigla_regiao)) +
+#   geom_line(size=1) +
+#   ggtitle("Cotação dólar 2018-07 até 2020-07") +
+#   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+#   geom_line(aes(y = CotacaoDolar), color = "darkred",group = 1,size=2)
+# 
+# linhaGasolinaBomba
 
-linhaGasolinaBomba
 
+#Matriz de correlação
+
+
+mediana_cor <- df_mediana
+
+#converter para inteiro
+for(i in 1:ncol(mediana_cor)){
+  
+  mediana_cor[,i]<- as.integer(mediana_cor[,i])
+}
+
+corrplot(cor(mediana_cor),method = "number", type = "lower")
+
+#Explica númericamente a correlação
+cor(mediana_cor)
+
+#Podemos observar que há correlação do preço do produtor com o preço do barril de petróleo e a cotação do dolar
+#Abaixo será plotado a curva do brent, cotacao dolar e o preço do produtor
+
+#Gráfico da variação do dolar e do barril de petroleo (brent)
+linhaDolar <- ggplot(data=df_total_brasil, aes(x=mes)) +
+  geom_line(aes(y = CotacaoDolar, group=1), color = "darkred", size=2)+
+  ggtitle("Cotação dólar 2018-07 até 2020-07") +
+  ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+linhaBrent <- ggplot(data=df_total_brasil, aes(x=mes)) +
+  geom_line(aes(y = CotacaoBrentReais, group=2), color = "steelblue", size=2)+
+  ggtitle("Cotação Barril em Real 2018-07 até 2020-07") +
+  ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))  
+
+
+#gráfico da variação do preço da gasolina pelo produtor
+linhaVarProdutor <- ggplot(data=df_total_brasil, aes(x=mes)) +
+  geom_line(aes(y = mediaPrecoGasolina, group=1), color = "darkred", size=2)+
+  ggtitle("Preço produtor gasolina 2018-07 até 2020-07") +
+  ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+linhaDolar+linhaBrent+linhaVarProdutor
+
+#Observando as curvas vemos uma correlação positiva entre barril de petroleo e o repasse do preço do produtor
+#Além disso na matrix de correlação é indicado que o dolar tem correlação inversamente proporcional ao preço do produtor
+#Entretanto analisando mais de perto o gráfico pode-se notar que houve um aumento fora do comum no preço do dolar e diminuição do preço do barril
+#Fato explicado pelos eventos da Covid no mundo, ontem gerou-se uma crise no qual o barril de petroleo sofreu queda em sua demanda em contra partida
+#o dolar sofreu uma alta demanda por liquidez.
 
 #Grafico media gasolina por região vs cotacao dolar
-df<- df%>%filter(variable == 'CotacaoDolar' | variable == 'mediaGasolinaBomba')
+df<- df%>%filter(variable == 'CotacaoDolar' | variable == 'medianaGasolinaBomba')
 linhaGasolinaBomba <- ggplot(data=df, aes(x = mes, color = Regiao_variable,y = value, group=Regiao_variable)) +
   geom_line(size=1) +
   ggtitle("Cotação dólar 2018-07 até 2020-07") +
   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 linhaGasolinaBomba
-
