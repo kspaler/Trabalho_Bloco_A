@@ -22,7 +22,7 @@ View(df_total)
 str(df_total)
 
 #mantem os valores de média
-df_media=df_total[c(1,2,3,4,5,6,7,8,9,10,11,22,23,24)]
+df_media=df_total[c(1,2,3,4,5,6,7,8,9,10,11,18,22,23,24,20)]
 
 str(df_media)
 
@@ -39,19 +39,24 @@ View(df_mediana)
 #serão utilizadas as medianas nas nossas análises, e será analisado somente o Brasil
 df_brasil <- subset(df_mediana, Sigla_regiao== 'BR')
 
-df_brasil=df_mediana_brasil[-c(4,5)]
+df_brasil=df_brasil[-c(4,5)]
 
 
 str(df_brasil)
-names(df_brasil)[3] <- "CotacaoBarrilPetroleoBrent"
-names(df_brasil)[4] <- "Etanol"
-names(df_brasil)[5] <- "GasolinaProdutor"
-names(df_brasil)[6] <- "TribEstaduais"
-names(df_brasil)[7] <- "TribFederais"
-names(df_brasil)[11] <- "CDI"
-names(df_brasil)[13] <- "GasolinaNaBomba"
+names(df_brasil)[3] <- "CotacaoBarrilPetroleo"
+names(df_brasil)[4] <- "Distrib_trans"
+names(df_brasil)[5] <- "Revenda"
+names(df_brasil)[6] <- "Etanol"
+names(df_brasil)[7] <- "GasolinaProdutor"
+names(df_brasil)[8] <- "TribEstaduais"
+names(df_brasil)[9] <- "TribFederais"
+names(df_brasil)[10] <- "IPCA"
+names(df_brasil)[13] <- "CDI"
+names(df_brasil)[15] <- "GasolinaNaBomba"
 
+df_brasil$Estoque_Empregos=as.numeric(df_brasil$Estoque_Empregos)
 
+df_brasil$IBC=as.numeric(df_brasil$IBC)
 
 
 #verificando linhas duplicadas
@@ -94,11 +99,11 @@ colors()
 
 
 #Primeiramente vou gerar um novo dataset filtrando apenas o Brasil para analise (sem levar em consideração por região)
-# df_total_brasil <- subset(df_total, Sigla_regiao== 'BR')
+# df_brasil <- subset(df_total, Sigla_regiao== 'BR')
 # 
-# View(df_total_brasil)
+# View(df_brasil)
 # 
-# str(df_total_brasil)
+# str(df_brasil)
 # 
 # 
 # 
@@ -147,25 +152,28 @@ corrplot(cor(df_brasil_cor), method = "number", type = "lower")
 corrplot(cor(df_brasil_cor), method = "circle", type = "lower")
 
 #Explica númericamente a correlação
-cor(df_brasil_cor)
+cor(df_brasil_cor,method = "pearson")
+
+cor(df_brasil_cor,method = "spearman")
+
 
 #Podemos observar que há correlação do preço do produtor com o preço do barril de petróleo e a cotação do dolar
 #Abaixo será plotado a curva do brent, cotacao dolar e o preço do produtor
 
 #Gráfico da variação do dolar e do barril de petroleo (brent)
-linhaDolar <- ggplot(data=df_total_brasil, aes(x=mes)) +
+linhaDolar <- ggplot(data=df_brasil, aes(x=mes)) +
   geom_line(aes(y = CotacaoDolar, group=1), color = "darkred", size=2)+
   ggtitle("Cotação dólar 2018-07 até 2020-07") +
   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-linhaBrent <- ggplot(data=df_total_brasil, aes(x=mes)) +
-  geom_line(aes(y = CotacaoBrentReais, group=2), color = "steelblue", size=2)+
+linhaBrent <- ggplot(data=df_brasil, aes(x=mes)) +
+  geom_line(aes(y = CotacaoBarrilPetroleoBrent, group=2), color = "steelblue", size=2)+
   ggtitle("Cotação Barril em Real 2018-07 até 2020-07") +
   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))  
 
 
 #gráfico da variação do preço da gasolina pelo produtor
-linhaVarProdutor <- ggplot(data=df_total_brasil, aes(x=mes)) +
+linhaVarProdutor <- ggplot(data=df_brasil, aes(x=mes)) +
   geom_line(aes(y = mediaPrecoGasolina, group=1), color = "darkred", size=2)+
   ggtitle("Preço produtor gasolina 2018-07 até 2020-07") +
   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
@@ -179,10 +187,20 @@ linhaDolar+linhaBrent+linhaVarProdutor
 #o dolar sofreu uma alta demanda por liquidez.
 
 #Grafico media gasolina por região vs cotacao dolar
-df<- df%>%filter(variable == 'CotacaoDolar' | variable == 'medianaGasolinaBomba')
-linhaGasolinaBomba <- ggplot(data=df, aes(x = mes, color = Regiao_variable,y = value, group=Regiao_variable)) +
-  geom_line(size=1) +
-  ggtitle("Cotação dólar 2018-07 até 2020-07") +
-  ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# df<- df%>%filter(variable == 'CotacaoDolar' | variable == 'medianaGasolinaBomba')
+# linhaGasolinaBomba <- ggplot(data=df, aes(x = mes, color = Regiao_variable,y = value, group=Regiao_variable)) +
+#   geom_line(size=1) +
+#   ggtitle("Cotação dólar 2018-07 até 2020-07") +
+#   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# 
+# linhaGasolinaBomba
 
-linhaGasolinaBomba
+str(df_brasil)
+
+
+ggplot(df_brasil, aes(x=mes)) + 
+  geom_line(aes(y = CotacaoDolar), color = "darkred",group=1) + 
+  geom_line(aes(y = GasolinaNaBomba), color="steelblue",group=1) + labs(tag = c("Cylinders","a"))
+
+
+?labs
