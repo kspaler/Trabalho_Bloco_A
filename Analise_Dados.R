@@ -16,47 +16,7 @@ library(psych)
 #install.packages("psych")
 
 
-df_total <- read.csv("df_final.csv")
-View(df_total)
-
-str(df_total)
-
-#mantem os valores de média
-df_media=df_total[c(1,2,3,4,5,6,7,8,9,10,11,18,22,23,24,20)]
-
-str(df_media)
-
-View(df_media)
-
-#Mantém os valores de mediana
-df_mediana=df_total[c(1,2,3,4,5,12,13,14,15,16,17,19,22,23,24,25,21)]
-str(df_mediana)
-
-
-View(df_mediana)
-
-
-#serão utilizadas as medianas nas nossas análises, e será analisado somente o Brasil
-df_brasil <- subset(df_mediana, Sigla_regiao== 'BR')
-
-df_brasil=df_brasil[-c(4,5)]
-
-
-str(df_brasil)
-names(df_brasil)[3] <- "CotacaoBarrilPetroleo"
-names(df_brasil)[4] <- "Distrib_trans"
-names(df_brasil)[5] <- "Revenda"
-names(df_brasil)[6] <- "Etanol"
-names(df_brasil)[7] <- "GasolinaProdutor"
-names(df_brasil)[8] <- "TribEstaduais"
-names(df_brasil)[9] <- "TribFederais"
-names(df_brasil)[10] <- "IPCA"
-names(df_brasil)[13] <- "CDI"
-names(df_brasil)[15] <- "GasolinaNaBomba"
-
-df_brasil$Estoque_Empregos=as.numeric(df_brasil$Estoque_Empregos)
-
-df_brasil$IBC=as.numeric(df_brasil$IBC)
+df_brasil <- read.csv("df_brasil.csv")
 
 
 #verificando linhas duplicadas
