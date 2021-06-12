@@ -627,7 +627,7 @@ head(df_brasil)
 
 df_brasil$EstEmp = as.numeric(gsub(",",".",df_brasil$EstEmp))
 
-write.csv(df_total, "df_brasil.csv",row.names=FALSE)
+write.csv(df_brasil, "df_brasil.csv",row.names=FALSE)
 
 
 summary(df_brasil, maxsum = max(lengths(lapply(df_brasil, unique))))
