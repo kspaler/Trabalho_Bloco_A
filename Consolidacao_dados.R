@@ -601,16 +601,18 @@ df_brasil=df_brasil[-c(4,5)]
 View(df_brasil)
 
 str(df_brasil)
-names(df_brasil)[3] <- "CotacaoBarrilPetroleo"
-names(df_brasil)[4] <- "Distrib_trans"
+names(df_brasil)[2] <- "Dolar"
+names(df_brasil)[3] <- "CtBarril"
+names(df_brasil)[4] <- "Distr_trans"
 names(df_brasil)[5] <- "Revenda"
 names(df_brasil)[6] <- "Etanol"
-names(df_brasil)[7] <- "GasolinaProdutor"
-names(df_brasil)[8] <- "TribEstaduais"
-names(df_brasil)[9] <- "TribFederais"
+names(df_brasil)[7] <- "GasolProdr"
+names(df_brasil)[8] <- "TribEst"
+names(df_brasil)[9] <- "TribFed"
 names(df_brasil)[10] <- "IPCA"
+names(df_brasil)[12] <- "EstEmp"
 names(df_brasil)[13] <- "CDI"
-names(df_brasil)[15] <- "GasolinaNaBomba"
+names(df_brasil)[15] <- "GasolNaBomba"
 
 df_brasil$IBC = as.numeric(gsub(",", ".", df_brasil$IBC ))
 
@@ -618,12 +620,12 @@ head(df_brasil)
 
 str(df_brasil)
 
-df_brasil$Estoque_Empregos = gsub("\\.","",df_brasil$Estoque_Empregos)
+df_brasil$EstEmp = gsub("\\.","",df_brasil$EstEmp)
 
 head(df_brasil) 
 
 
-df_brasil$Estoque_Empregos = as.numeric(gsub(",",".",df_brasil$Estoque_Empregos))
+df_brasil$EstEmp = as.numeric(gsub(",",".",df_brasil$EstEmp))
 
 write.csv(df_total, "df_brasil.csv",row.names=FALSE)
 
