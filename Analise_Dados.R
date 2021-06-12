@@ -1,4 +1,4 @@
-setwd("C:/Users/felip/OneDrive/feliped16/OneDrive/PosGraduação BigData/Bloco A - Analítico e estudo de caso/Trabalho Petroleo-Gasolina/GitHub Projeto/Trabalho_Bloco_A")
+setwd("E:/Estudos/Trabalho_Bloco_A")
 getwd()
 
 library(dplyr)
@@ -29,27 +29,41 @@ str(df_media)
 View(df_media)
 
 #Mantém os valores de mediana
-df_mediana=df_total[c(1,2,3,4,5,12,13,14,15,16,17,18,19,20,21,22,23,24,25)]
+df_mediana=df_total[c(1,2,3,4,5,12,13,14,15,16,17,19,22,23,24,25,21)]
 str(df_mediana)
 
 
 View(df_mediana)
 
 
+#serão utilizadas as medianas nas nossas análises, e será analisado somente o Brasil
+df_brasil <- subset(df_mediana, Sigla_regiao== 'BR')
+
+df_brasil=df_mediana_brasil[-c(4,5)]
+
+
+str(df_brasil)
+names(df_brasil)[3] <- "CotacaoBarrilPetroleoBrent"
+names(df_brasil)[4] <- "Etanol"
+names(df_brasil)[5] <- "GasolinaProdutor"
+names(df_brasil)[6] <- "TribEstaduais"
+names(df_brasil)[7] <- "TribFederais"
+names(df_brasil)[11] <- "CDI"
+names(df_brasil)[13] <- "GasolinaNaBomba"
+
+
+
+
 #verificando linhas duplicadas
-sum(duplicated(df_total))
+sum(duplicated(df_brasil))
 
 #verifica se tem registros nulos
-sum(is.na(df_total))
+sum(is.na(df_brasil))
 
 #Estatísticas básicas: mínimos, máximos, médias, desvios, etc. de cada variável;
-summary(df_total, maxsum = max(lengths(lapply(df_total, unique))))
+summary(df_brasil, maxsum = max(lengths(lapply(df_total, unique))))
 
-#Análise utilizando a média
-
-
-#plotar a relação de cada uma das varíaveis em relação ao preço da bom,ba da gasolina
-
+View(df_brasil)
 
 # plot
 
@@ -59,48 +73,48 @@ colors()
 
 
 #Transpor o dataframe de colunas para linhas
-df <- df_mediana%>%
-  select(mes, Sigla_regiao, CotacaoDolar, CotacaoBrentReais,medianaDistrTransporte,medianaRevenda,medianaPrecoEtanol,medianaPrecoGasolina,medianaTribEstadual,medianaTribEstadual,medianaTribFederal,MedianaIPCAMes,medianaGasolinaBomba) %>%
-  gather(key = "variable", value = "value", -mes,-Sigla_regiao)
-
-View(df)
-#Mescla colunas regiao e impostos/cotacao/brent(variable)
-df$Regiao_variable <- paste(df$Sigla_regiao,df$variable)
-
-#eliminar linhas repetidas de cotacao/brent(reais e dolar)
-df<- df%>%filter(
-  Regiao_variable != 'SE CotacaoDolar' & Regiao_variable != 'SE CotacaoBrentReais' & Regiao_variable != 'SE ValorEmDolar'&
-    Regiao_variable != 'S CotacaoDolar' & Regiao_variable != 'S CotacaoBrentReais' & Regiao_variable != 'S ValorEmDolar'&
-    Regiao_variable != 'NE CotacaoDolar' & Regiao_variable != 'NE CotacaoBrentReais' & Regiao_variable != 'NE ValorEmDolar'&
-    Regiao_variable != 'CO CotacaoDolar' & Regiao_variable != 'CO CotacaoBrentReais' & Regiao_variable != 'CO ValorEmDolar'&
-    Regiao_variable != 'N CotacaoDolar' & Regiao_variable != 'N CotacaoBrentReais' & Regiao_variable != 'N ValorEmDolar')
-
+# df <- df_mediana%>%
+#   select(mes, Sigla_regiao, CotacaoDolar, CotacaoBrentReais,medianaDistrTransporte,medianaRevenda,medianaPrecoEtanol,medianaPrecoGasolina,medianaTribEstadual,medianaTribEstadual,medianaTribFederal,MedianaIPCAMes,medianaGasolinaBomba) %>%
+#   gather(key = "variable", value = "value", -mes,-Sigla_regiao)
+# 
+# View(df)
+# #Mescla colunas regiao e impostos/cotacao/brent(variable)
+# df$Regiao_variable <- paste(df$Sigla_regiao,df$variable)
+# 
+# #eliminar linhas repetidas de cotacao/brent(reais e dolar)
+# df<- df%>%filter(
+#   Regiao_variable != 'SE CotacaoDolar' & Regiao_variable != 'SE CotacaoBrentReais' & Regiao_variable != 'SE ValorEmDolar'&
+#     Regiao_variable != 'S CotacaoDolar' & Regiao_variable != 'S CotacaoBrentReais' & Regiao_variable != 'S ValorEmDolar'&
+#     Regiao_variable != 'NE CotacaoDolar' & Regiao_variable != 'NE CotacaoBrentReais' & Regiao_variable != 'NE ValorEmDolar'&
+#     Regiao_variable != 'CO CotacaoDolar' & Regiao_variable != 'CO CotacaoBrentReais' & Regiao_variable != 'CO ValorEmDolar'&
+#     Regiao_variable != 'N CotacaoDolar' & Regiao_variable != 'N CotacaoBrentReais' & Regiao_variable != 'N ValorEmDolar')
+# 
 
 
 
 
 #Primeiramente vou gerar um novo dataset filtrando apenas o Brasil para analise (sem levar em consideração por região)
-df_total_brasil <- subset(df_total, Sigla_regiao== 'BR')
-
-View(df_total_brasil)
-
-str(df_total_brasil)
-
-
-
-
-
-str(df_media)
-
-linhaGasolinaBomba <- ggplot(data=df_media, aes(x=mes, color = Sigla_regiao,y = mediaGasolinaBomba, group=Sigla_regiao)) +
-  geom_line(size=1) +
-  ggtitle("Cotação dólar 2018-07 até 2020-07") +
-  ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-
-linhaGasolinaBomba
-
-View(df_media)
+# df_total_brasil <- subset(df_total, Sigla_regiao== 'BR')
+# 
+# View(df_total_brasil)
+# 
+# str(df_total_brasil)
+# 
+# 
+# 
+# 
+# 
+# str(df_media)
+# 
+# linhaGasolinaBomba <- ggplot(data=df_media, aes(x=mes, color = Sigla_regiao,y = mediaGasolinaBomba, group=Sigla_regiao)) +
+#   geom_line(size=1) +
+#   ggtitle("Cotação dólar 2018-07 até 2020-07") +
+#   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# 
+# 
+# linhaGasolinaBomba
+# 
+# View(df_media)
 
 
 # linhaGasolinaBomba <- ggplot(data=df_media, aes(x=mes, color = Sigla_regiao,y = mediaGasolinaBomba, group=Sigla_regiao)) +
@@ -115,18 +129,25 @@ View(df_media)
 #Matriz de correlação
 
 
-mediana_cor <- df_mediana
+df_brasil_cor <- df_brasil
 
 #converter para inteiro
-for(i in 1:ncol(mediana_cor)){
+for(i in 1:ncol(df_brasil_cor)){
   
-  mediana_cor[,i]<- as.integer(mediana_cor[,i])
+  df_brasil_cor[,i]<- as.numeric(df_brasil_cor[,i])
 }
 
-corrplot(cor(mediana_cor),method = "number", type = "lower")
+str(df_brasil_cor)
+
+View(df_brasil_cor)
+
+
+corrplot(cor(df_brasil_cor), method = "number", type = "lower")
+
+corrplot(cor(df_brasil_cor), method = "circle", type = "lower")
 
 #Explica númericamente a correlação
-cor(mediana_cor)
+cor(df_brasil_cor)
 
 #Podemos observar que há correlação do preço do produtor com o preço do barril de petróleo e a cotação do dolar
 #Abaixo será plotado a curva do brent, cotacao dolar e o preço do produtor
