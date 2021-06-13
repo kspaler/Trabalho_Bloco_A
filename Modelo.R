@@ -7,23 +7,14 @@ library(tidyverse)
 library(urca)
  
 #importando o dataframe
-df_final <-read.csv('df_final.csv')
+df_final <-read.csv('df_brasil.csv')
+df_final=df_final[-c(1,9)]
 
+df
 
-#tratando numeros
-
-df_final$IBC = as.numeric(gsub(",", ".", df_final$IBC ))
-df_final$Estoque_Empregos = gsub("\\,","",df_final$Estoque_Empregos)
-df_final$Estoque_Empregos = as.numeric(gsub("\\.","",df_final$Estoque_Empregos))
-
-
-
-#filtrando df para BR
-df<- df_final  %>% filter(Sigla_regiao == "BR")
-
+ 
 #plotando variaveis
-df_ts<-subset(df, select = cbind('mediaGasolinaBomba','IBC', 'PIM', 'CotacaoBrentReais', 'CotacaoDolar','MedianaIPCAMes','mediaCDI', 'Estoque_Empregos'))
-df_ts<-ts(df_ts, start = c(2018,07), end=c(2020,07), freq=12)  
+ df_ts<-ts(df_final, start = c(2018,07), end=c(2020,07), freq=12)  
 autoplot( df_ts, facets=TRUE) +
   xlab("Year") + ylab("") +
   ggtitle("Variáveis economicas e o Preço da Gasolina")
@@ -33,21 +24,40 @@ autoplot( df_ts, facets=TRUE) +
 #verificando sazonalidade
 
 
-# Create new fit on log scale series for seasonal decomposition
-sazonal <- stl(log_y, s.window = "period")
-# Plot Seasonal Decomposition
-plot(sazonal, main = "Decomposição sazonal do log(Preco Medio Gasolina na Bomba)")
 
 
 
  
-y  <- ts(as.vector(df[, c("mediaGasolinaBomba")]))
+y  <- ts(as.vector(df_final[, c("GasolNaBomba")]))
 y  <- ts(y, start = c(2018,07), end=c(2020,07), freq=12)  
 
+log_y = log(y)
+# Create new fit on log scale series for seasonal decomposition
+sazonal <- stl(y, s.window = "period")
+# Plot Seasonal Decomposition
+plot(sazonal, main = "Decomposição sazonal do log(Preco Medio Gasolina na Bomba)")
 
-summary(ur.kpss(y))
+ 
+
+summary(ur.kpss(y)) 
+
+#Test is of type: mu with 2 lags. 
+#Value of test-statistic is: 0.3599
+
+#Critical value for a significance level of: 
+#  10pct  5pct 2.5pct  1pct
+#critical values 0.347 0.463  0.574 0.739
+
+#This time, the test statistic is tiny, and well 
+#within the range we would expect for stationary data. 
+#we can conclude that the   data are stationary.
+#podemos utilizar o modelo arima 
 
 
+
+
+
+summary(ur.kpss(d.y))
 #Stationarity Testing
 #Autocorrelation Function (ACF)
 #Ljung-Box test for independence.
@@ -71,24 +81,24 @@ summary(ur.df(y))
 
 
 #separando em treino e Teste
-training <- df[1:20,]  
-test <- df[21:25,] 
+training <- df_final[1:20,]  
+test <- df_final[21:25,] 
 
 #variavel endogena
-y_train <- ts(as.vector(training[, c("mediaGasolinaBomba")]))
+y_train <- ts(as.vector(training[, c("GasolNaBomba")]))
 y_train <- ts(y_train, start = c(2018,07), end=c(2020,02), freq=12)  
 
-y_test <- ts(as.vector(test[, c("mediaGasolinaBomba")]))
+y_test <- ts(as.vector(test[, c("GasolNaBomba")]))
 y_test <- ts(y_test, start = c(2020,03), end=c(2020,07), freq=12)  
 
 
 
 #variavel exogena
-x_train <- subset(training, select = cbind('IBC', 'PIM', 'CotacaoBrentReais', 'CotacaoDolar','MedianaIPCAMes','mediaCDI', 'Estoque_Empregos')) 
+x_train <- subset(training, select = cbind('IBC', 'PIM', 'Dolar','IPCA','CDI', 'EstEmp')) 
 x_train <- ts(as.vector(x_train))
 x_train <- ts(x_train, start = c(2018,07), end=c(2020,02), freq=12)  
 
-x_test <- subset(test, select = cbind('IBC', 'PIM', 'CotacaoBrentReais', 'CotacaoDolar','MedianaIPCAMes','mediaCDI', 'Estoque_Empregos')) 
+x_test <- subset(test, select = cbind('IBC', 'PIM',  'Dolar','IPCA','CDI', 'EstEmp')) 
 x_test <- ts(as.vector(x_test))
 x_test <- ts(x_train,  start = c(2018,07), end=c(2020,02), freq=12) 
 
@@ -162,14 +172,14 @@ checkresiduals(auto2)
 library(MLmetrics)
 
 
-forecast_arima <- forecast(auto2, xreg =  x_test[,c('IBC', 'PIM', 'CotacaoBrentReais', 'CotacaoDolar','MedianaIPCAMes','mediaCDI', 'Estoque_Empregos')] )
+forecast_arima <- forecast(auto2, xreg =  x_test[,c('IBC', 'PIM', 'CtBarril', 'Dolar','IPCA','CDI', 'EstEmp')] )
 plot(forecast_arima, xlab = "Data", ylab = "R$", main = "Previsao do preco da gasolina com ARIMA + regressores - teste")
 
-MLmetrics::MAPE(forecast_arima$mean %>% as.numeric(), test[ , "mediaGasolinaBomba"]) 
-MAE(forecast_arima$mean %>% as.numeric(),test[ , "mediaGasolinaBomba"])
-RMSE(forecast_arima$mean %>% as.numeric(), test[ , "mediaGasolinaBomba"])
+MLmetrics::MAPE(forecast_arima$mean %>% as.numeric(), test[ , "GasolNaBomba"]) 
+MAE(forecast_arima$mean %>% as.numeric(),test[ , "GasolNaBomba"])
+RMSE(forecast_arima$mean %>% as.numeric(), test[ , "GasolNaBomba"])
 
-Rsquared <- 1 - (sum((y_test - forecast_arima$mean)^2)/sum((y_test - mean(test[ , "mediaGasolinaBomba"]))^2))
+Rsquared <- 1 - (sum((y_test - forecast_arima$mean)^2)/sum((y_test - mean(test[ , "GasolNaBomba"]))^2))
 Rsquared*100
 
 plot(y[21:25] , forecast_arima$mean[1:5]  )
@@ -192,24 +202,59 @@ forecast(fity,h=10,xreg=forecast(fitx,h=10)$mean)
 
 
 #modelo simples
-lmodel = lm(y_train~x_train) #Create the linear regression
+lmodel = lm(df_final[,"GasolNaBomba"]~df_final[,"TribEst"] +df_final[,"GasolProdr"] ) #Create the linear regression
+summary(lmodel) #Review the results
+
+model = lm(log(df_final[,"GasolNaBomba"])~log(df_final[,"CtBarril"])) #Create the linear regression
 summary(lmodel) #Review the results
  
 y_heat<-predict(lmodel, newdata = x_test)
  
- plot(y_heat[1:5],y[21:25])
+plot(y_heat[1:5],y[21:25])
  
- MLmetrics::MAPE(y_heat[1:5]%>% as.numeric(), test[ , "mediaGasolinaBomba"]) 
- MAE(y_heat[1:5] %>% as.numeric(),test[ , "mediaGasolinaBomba"])
- RMSE(y_heat[1:5]as.numeric(), test[ , "mediaGasolinaBomba"])
  
- Rsquared <- 1 - (sum((y_test - y_heat[1:5]n)^2)/sum((y_test - mean(test[ , "mediaGasolinaBomba"]))^2))
- Rsquared 
+ log(df_final[,"CtBarril"])
+
+plot(round(df_final[,"Revenda"] / df_final[,"GasolNaBomba"] ,2) ,
+round(df_final[,"Distr_trans"] / df_final[,"GasolNaBomba"] ,2)
+)
  
+
+
+
+######## neural networks models
+
+#neural network autoregression or NNAR model.
+
+fit <- nnetar(df_ts[,"GasolNaBomba"],xreg = df_ts[,c('IBC', 'PIM', 'CtBarril', 'Dolar','IPCA','CDI', 'EstEmp')], lambda=0)
+autoplot(forecast(fit,h=12, xreg=fit$xreg))
+
+
+
+#SIMULACAO PARA DIVERSOS CENARIOS
+
+fcast <- forecast(fit, PI=TRUE, h=30)
+autoplot(fcast)
+
+
+
+#roteiro
+#1) lm simples
+#2) arima e arimax 
+#3) neural network
+
+#4) media movel (Base Line) <-
+
+
+#### MEDIA MOVEL
+mean <- mean(y)
+mean6 <- rollmean(y, k=6, align = "right")
+mean9 <- rollmean(y, k=9, align = "right")
+mean12 <- rollmean(y, k=12, align = "right")
+
+
 ######################## deep fucking learning
 
- 
- 
  library(keras)
  library(mlbench)
  library(dplyr)
@@ -217,7 +262,7 @@ y_heat<-predict(lmodel, newdata = x_test)
  library(neuralnet)
 
    
- n <- neuralnet(mediaGasolinaBomba~IBC+PIM+CotacaoBrentReais+CotacaoDolar+MedianaIPCAMes+mediaCDI+Estoque_Empregos,
+ n <- neuralnet(GasolNaBomba~IBC+PIM+CtBarril+Dolar+IPCA+CDI+EstEmp,
                 data = training,
                 hidden = c(8,5),
                 linear.output = F,
@@ -281,5 +326,10 @@ y_heat<-predict(lmodel, newdata = x_test)
  plot(testtarget, pred) 
  
  
+ df_rj <- read_csv('D:\\Trabalho_Bloco_A\\df_rj.csv')
+ 
+ sd(df_rj$medianaGasolinaBomba) 
   
-  
+ 
+ 
+ 
