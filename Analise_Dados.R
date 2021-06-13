@@ -107,7 +107,9 @@ str(df_brasil_cor)
 View(df_brasil_cor)
 
 
-corrplot(cor(df_brasil_cor), method = "number", type = "lower")
+corrplot(cor(df_brasil_cor,method = "pearson"), method = "number", type = "lower")
+
+corrplot(cor(df_brasil_cor,method = "spearman"), method = "number", type = "lower")
 
 corrplot(cor(df_brasil_cor), method = "circle", type = "lower")
 

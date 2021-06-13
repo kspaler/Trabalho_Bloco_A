@@ -39,32 +39,45 @@ df_impostos2=df_impostos[-c(1,3,5)]
 df_impostos3 <- spread(df_impostos2, Taxa, Valor)
 options(dplyr.width = Inf)
 head(df_impostos3)
+
+
+#soma os campos Margem Bruta de Distribuição 5 + Custos Transporte e Margem Bruta de Revenda 5 nos registros anteriores a 09/2020
+for (i in 1:nrow(df_impostos3))
+{
+  if (is.na(df_impostos3[i,]$`Margem Bruta de Distribuição + Revenda 5`))
+  {
+    df_impostos3[i,]$`Margem Bruta de Distribuição + Revenda 5` <- df_impostos3[i,]$`Margem Bruta de Distribuição 5 + Custos Transporte`+df_impostos3[i,]$`Margem Bruta de Revenda 5`
+    
+  }
+}
+
+View(df_impostos3)
+
 #agrupa e gera a media e a mediana
 
 df_impostos3=df_impostos3%>%group_by(Sigla_regiao,mes)%>%
-  summarize(mediaDistrTransporte=mean(`Margem Bruta de Distribuição 5 + Custos Transporte`), 
-            mediaRevenda=mean(`Margem Bruta de Revenda 5`),
-            mediaPrecoEtanol=mean(`Preço do Etanol Anidro 2`),
+  summarize(mediaPrecoEtanol=mean(`Preço do Etanol Anidro 2`),
             mediaPrecoGasolina=mean(`Preço Produtor de Gasolina A Comum1`),
             mediaTribEstadual=mean(`Tributos Estaduais 4`),
             mediaTribFederal=mean(`Tributos Federais 3`),
-            medianaDistrTransporte=median(`Margem Bruta de Distribuição 5 + Custos Transporte`), 
-            medianaRevenda=median(`Margem Bruta de Revenda 5`),
+            mediaDistRev=mean(`Margem Bruta de Distribuição + Revenda 5`),
             medianaPrecoEtanol=median(`Preço do Etanol Anidro 2`),
             medianaPrecoGasolina=median(`Preço Produtor de Gasolina A Comum1`),
             medianaTribEstadual=median(`Tributos Estaduais 4`),
-            medianaTribFederal=median(`Tributos Federais 3`)
+            medianaTribFederal=median(`Tributos Federais 3`),
+            medianaDistRev=median(`Margem Bruta de Distribuição + Revenda 5`)
   )
 #----end mod felipe
 
 #tira meses a mais de dados
-df_impostos3<-df_impostos3%>%filter(mes<'2020-08')
+df_impostos3<-df_impostos3%>%filter(mes<'2020-11')
 
 head(df_impostos3)
 
 View(df_impostos3)
 
 distinct(df_impostos3,Sigla_regiao)
+
 
 #CARREGA COTAÇÃO DO DOLAR
 
@@ -87,7 +100,7 @@ df_dolar$DataCotacao<- as.character(df_dolar$DataCotacao)
 
 df_dolar2<-df_dolar[-c(3,4,5,6)]
 #retira meses a mais
-df_dolar2<-df_dolar2%>%filter(DataCotacao<'2020-08' & DataCotacao>'2018-06')
+df_dolar2<-df_dolar2%>%filter(DataCotacao<'2020-11' & DataCotacao>'2018-06')
 
 df_dolar2$Ultimo<- gsub(',', '.', df_dolar2$Ultimo)
 
@@ -119,7 +132,7 @@ df_brent$mes<-substr(df_brent$DataCotacao,1,7)
 View(df_brent)
 
 #retira meses a mais
-df_brent<-df_brent%>%filter(mes<'2020-08' & mes>'2018-06')
+df_brent<-df_brent%>%filter(mes<'2020-11' & mes>'2018-06')
 
 df_brent$ValorBrentEmDolar<-as.numeric(df_brent$ValorBrentEmDolar)
 
@@ -150,7 +163,7 @@ df_imp_dolar_brent<-merge(df_dolar_brent3,df_impostos3,by="mes")
 
 View(df_imp_dolar_brent)
 
-#CARREGA O PREÇO DA GASOLINA NA BOMBA
+#CARREGA O PREÇO DA GASOLINA NA BOMBA, não é mais necessário, usamos o valor que vem no daraset de impostos!
 
 df_preco_gas <- data.frame()
 
@@ -217,6 +230,7 @@ df_preco_gas3=df_preco_gas2%>%group_by(Regiao,mes)%>%summarize(mediaValorVendaGa
 View(df_preco_gas3)
 
 View(df_preco_gas3%>%filter(Regiao == 'SE'))
+
 
 #CARREGA IPCA
 
@@ -373,18 +387,33 @@ df_total <- read.csv("df_final.csv")
 
 str(df_total)
 
-df_total=df_total[-1]
+#df_total=df_total[-1]
 
 #calcula preço médio da gasolina na bomba
 df_total<-df_total %>%
-  mutate(mediaGasolinaBomba = select(.,7:12) %>% rowSums(na.rm = TRUE))
+  mutate(mediaGasolinaBomba = select(.,6:10) %>% rowSums(na.rm = TRUE))
+
+#calcula percetagem do imposto 
+
+df_total$ImpPercMedia=df_total$mediaTribEstadual*100/df_total$mediaGasolinaBomba     
+
 
 #calcula preço por mediana da gasolina na bomba
 df_total<-df_total %>%
-  mutate(medianaGasolinaBomba = select(.,13:18) %>% rowSums(na.rm = TRUE))
+  mutate(medianaGasolinaBomba = select(.,11:15) %>% rowSums(na.rm = TRUE))
+
+
+#calcula percetagem do imposto 
+
+df_total$ImpPercMediana=df_total$medianaTribEstadual*100/df_total$medianaGasolinaBomba  
+
 
 
 View(df_total)
+
+
+
+
 
 write.csv(df_total, "df_final.csv",row.names=FALSE)
 
@@ -401,7 +430,7 @@ View(df_pim_pf)
 #dropa lixo das primeiras 3 linhas
 df_pim_pf=df_pim_pf[-c(1,2,3),]
 
-df_pim_pf=df_pim_pf[-c(26),]
+df_pim_pf=df_pim_pf[-c(29),]
 
 df_pim_pf=df_pim_pf[-c(2)]
 
@@ -435,7 +464,7 @@ df_EEF <- read.csv2("Estoque_Empregos_Formais.csv")
 
 View(df_EEF)
 
-df_EEF=df_EEF[-c(26),]
+df_EEF=df_EEF[-c(29),]
 
 
 names(df_EEF)[2] <- "Estoque_Empregos"
@@ -457,7 +486,7 @@ View(df_total3)
 
 #CDI
 
-df_cdi <-read.csv("CDI.csv",sep = "\t",dec = ",")
+df_cdi <-read.csv("CDI.csv",sep = ";",dec = ",")
 
 View(df_cdi)
 
@@ -473,7 +502,7 @@ df_cdi$Data<- as.character(df_cdi$Data)
 
 df_cdi$mes<-substr(df_cdi$Data,1,7)
 
-df_cdi2=df_cdi[-c(1,2,3,5,6)]
+df_cdi2=df_cdi[-c(1,2,3,5,6,7,8,9,10)]
 
 View(df_cdi2)
 
@@ -492,7 +521,7 @@ df_ibc<-read.csv("IBC.csv",sep = ";",dec = ",")
 
 View(df_ibc)
 
-df_ibc=df_ibc[-c(26),]
+df_ibc=df_ibc[-c(29),]
 
 names(df_ibc)[2] <- "IBC"
 
@@ -520,12 +549,14 @@ View(df_total5)
 
 df_mr <-read_excel("MassaRendimento.xlsx", sheet = 1)
 
-View(df_mr_transpose)
+View(df_mr)
 
 df_mr=df_mr[-c(1,2,5),]
 
 
 df_mr_transpose <- as.data.frame(t(as.matrix(df_mr)))
+
+View(df_mr_transpose)
 
 
 names(df_mr_transpose)[1] <- "Data"
@@ -569,7 +600,7 @@ df_total6 <- df_total5 %>% inner_join(df_mr_transpose, by=c("mes"))
 View(df_total6)
 
 
-write.csv(df_total, "df_final.csv",row.names=FALSE)
+write.csv(df_total6, "df_final.csv",row.names=FALSE)
 
 #Seta dados do Brasil
 
@@ -579,14 +610,14 @@ View(df_total)
 str(df_total)
 
 #mantem os valores de média
-df_media=df_total[c(1,2,3,4,5,6,7,8,9,10,11,18,22,23,24,20)]
+df_media=df_total[c(1,2,3,4,5,6,7,8,9,10,16,19,22,23,24,25,26,18)]
 
 str(df_media)
 
 View(df_media)
 
 #Mantém os valores de mediana
-df_mediana=df_total[c(1,2,3,4,5,12,13,14,15,16,17,19,22,23,24,25,21)]
+df_mediana=df_total[c(1,2,3,4,5,11,12,13,14,15,17,21,22,23,24,25,26,20)]
 str(df_mediana)
 
 
@@ -603,16 +634,17 @@ View(df_brasil)
 str(df_brasil)
 names(df_brasil)[2] <- "Dolar"
 names(df_brasil)[3] <- "CtBarril"
-names(df_brasil)[4] <- "Distr_trans"
-names(df_brasil)[5] <- "Revenda"
-names(df_brasil)[6] <- "Etanol"
-names(df_brasil)[7] <- "GasolProdr"
-names(df_brasil)[8] <- "TribEst"
-names(df_brasil)[9] <- "TribFed"
-names(df_brasil)[10] <- "IPCA"
+names(df_brasil)[4] <- "Etanol"
+names(df_brasil)[5] <- "GasolProdr"
+names(df_brasil)[6] <- "TribEst"
+names(df_brasil)[7] <- "TribFed"
+names(df_brasil)[8] <- "DistrRev"
+names(df_brasil)[9] <- "IPCA"
+names(df_brasil)[10] <- "PCTribEst"
 names(df_brasil)[12] <- "EstEmp"
 names(df_brasil)[13] <- "CDI"
-names(df_brasil)[15] <- "GasolNaBomba"
+names(df_brasil)[15] <- "MRed"
+names(df_brasil)[16] <- "GasolNaBomba"
 
 df_brasil$IBC = as.numeric(gsub(",", ".", df_brasil$IBC ))
 
@@ -626,6 +658,8 @@ head(df_brasil)
 
 
 df_brasil$EstEmp = as.numeric(gsub(",",".",df_brasil$EstEmp))
+
+View(df_brasil)
 
 write.csv(df_brasil, "df_brasil.csv",row.names=FALSE)
 
