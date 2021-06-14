@@ -26,7 +26,7 @@ sum(duplicated(df_brasil))
 sum(is.na(df_brasil))
 
 #Estatísticas básicas: mínimos, máximos, médias, desvios, etc. de cada variável;
-summary(df_brasil, maxsum = max(lengths(lapply(df_total, unique))))
+summary(df_brasil, maxsum = max(lengths(lapply(df_brasil, unique))))
 
 View(df_brasil)
 
@@ -111,6 +111,10 @@ corrplot(cor(df_brasil_cor,method = "pearson"), method = "number", type = "lower
 
 corrplot(cor(df_brasil_cor,method = "spearman"), method = "number", type = "lower")
 
+corrplot(cor(df_brasil_cor,method = "pearson"), method = "circle", type = "lower")
+
+corrplot(cor(df_brasil_cor,method = "spearman"), method = "circle", type = "lower")
+
 corrplot(cor(df_brasil_cor), method = "circle", type = "lower")
 
 #Explica númericamente a correlação
@@ -124,23 +128,101 @@ cor(df_brasil_cor,method = "spearman")
 
 #Gráfico da variação do dolar e do barril de petroleo (brent)
 linhaDolar <- ggplot(data=df_brasil, aes(x=mes)) +
-  geom_line(aes(y = CotacaoDolar, group=1), color = "darkred", size=2)+
-  ggtitle("Cotação dólar 2018-07 até 2020-07") +
+  geom_line(aes(y = Dolar, group=1), color = "darkred", size=2)+
+  ggtitle("Cotação dólar") +
   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
+linhaDolar
+
 linhaBrent <- ggplot(data=df_brasil, aes(x=mes)) +
-  geom_line(aes(y = CotacaoBarrilPetroleoBrent, group=2), color = "steelblue", size=2)+
-  ggtitle("Cotação Barril em Real 2018-07 até 2020-07") +
+  geom_line(aes(y = CtBarril, group=2), color = "steelblue", size=2)+
+  ggtitle("Cotação Barril em Real") +
   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))  
 
 
 #gráfico da variação do preço da gasolina pelo produtor
-linhaVarProdutor <- ggplot(data=df_brasil, aes(x=mes)) +
-  geom_line(aes(y = mediaPrecoGasolina, group=1), color = "darkred", size=2)+
-  ggtitle("Preço produtor gasolina 2018-07 até 2020-07") +
+linhaVarGas <- ggplot(data=df_brasil, aes(x=mes)) +
+  geom_line(aes(y = GasolNaBomba, group=1), color = "darkred", size=2)+
+  ggtitle("Preço gasolina") +
   ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-linhaDolar+linhaBrent+linhaVarProdutor
+linhaIBC <- ggplot(data=df_brasil, aes(x=mes)) +
+  geom_line(aes(y = IBC, group=1), color = "darkred", size=2)+
+  ggtitle("IBC") +
+  ylab("Cotação")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+linhaDolar+linhaBrent+linhaVarGas+linhaIBC
+
+
+
+
+
+#pela cotação do dolar e do barril de petróleo vemos a curva causada pelo corona começou em 01/2020, então para motivo de análise vamos dividir em dois períodos
+# a correlação, antes do covid e pós covid
+
+df_brasil_pre_cor<-df_brasil%>%filter(as.character(mes) < "2020-01")
+
+df_brasil_pos_cor<-df_brasil%>%filter(as.character(mes) >= "2020-01")
+
+View(df_brasil_pre_cor)
+
+View(df_brasil_pos_cor)
+
+#pre covid
+str(df_brasil_pre_cor)
+
+
+df_brasil_pre_cor_cor <- df_brasil_pre_cor
+
+#converter para inteiro
+for(i in 1:ncol(df_brasil_pre_cor)){
+  
+  df_brasil_pre_cor_cor[,i]<- as.numeric(df_brasil_pre_cor[,i])
+}
+
+View(df_brasil_pre_cor_cor)
+
+str(df_brasil_pre_cor_cor)
+
+
+corrplot(cor(df_brasil_pre_cor_cor[-1],method = "pearson"), method = "number", type = "lower")
+
+corrplot(cor(df_brasil_pre_cor_cor[-1],method = "pearson"), method = "circle", type = "lower")
+
+corrplot(cor(df_brasil_pre_cor_cor[-1],method = "spearman"), method = "number", type = "lower")
+
+corrplot(cor(df_brasil_pre_cor_cor[-1],method = "pearson"), method = "circle", type = "lower")
+
+
+#pos covid
+
+str(df_brasil_pos_cor)
+
+
+df_brasil_pos_cor_cor <- df_brasil_pos_cor
+
+#converter para inteiro
+for(i in 1:ncol(df_brasil_pos_cor)){
+  
+  df_brasil_pos_cor_cor[,i]<- as.numeric(df_brasil_pos_cor[,i])
+}
+
+View(df_brasil_pos_cor_cor)
+
+str(df_brasil_pos_cor_cor)
+
+
+corrplot(cor(df_brasil_pos_cor_cor[-1],method = "pearson"), method = "number", type = "lower")
+
+corrplot(cor(df_brasil_pos_cor_cor[-1],method = "pearson"), method = "circle", type = "lower")
+
+corrplot(cor(df_brasil_pos_cor_cor[-1],method = "spearman"), method = "number", type = "lower")
+
+corrplot(cor(df_brasil_pos_cor_cor[-1],method = "pearson"), method = "circle", type = "lower")
+
+
+
+
 
 #Observando as curvas vemos uma correlação positiva entre barril de petroleo e o repasse do preço do produtor
 #Além disso na matrix de correlação é indicado que o dolar tem correlação inversamente proporcional ao preço do produtor
