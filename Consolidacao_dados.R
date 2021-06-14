@@ -624,45 +624,116 @@ str(df_mediana)
 View(df_mediana)
 
 
-#serão utilizadas as medianas nas nossas análises, e será analisado somente o Brasil
+df_mediana=df_mediana[-c(4)]
+
+
+names(df_mediana)[2] <- "Dolar"
+names(df_mediana)[3] <- "CtBarril"
+
+names(df_mediana)[5] <- "Etanol"
+names(df_mediana)[6] <- "GasolProdr"
+names(df_mediana)[7] <- "TribEst"
+names(df_mediana)[8] <- "TribFed"
+names(df_mediana)[9] <- "DistrRev"
+names(df_mediana)[10] <- "IPCA"
+names(df_mediana)[11] <- "PCTribEst"
+names(df_mediana)[13] <- "EstEmp"
+names(df_mediana)[14] <- "CDI"
+names(df_mediana)[16] <- "MRed"
+names(df_mediana)[17] <- "GasolNaBomba"
+
+df_mediana$IBC = as.numeric(gsub(",", ".", df_mediana$IBC ))
+
+head(df_mediana) 
+
+str(df_mediana)
+
+df_mediana$EstEmp = gsub("\\.","",df_mediana$EstEmp)
+
+head(df_mediana) 
+
+
+df_mediana$EstEmp = as.numeric(gsub(",",".",df_mediana$EstEmp))
+
+View(df_mediana)
+
+
+write.csv(df_mediana, "df_todas_regioes.csv",row.names=FALSE)
+
+
+
+
+#BRASIL
 df_brasil <- subset(df_mediana, Sigla_regiao== 'BR')
 
-df_brasil=df_brasil[-c(4,5)]
+df_brasil=df_brasil[-c(4)]
 
 View(df_brasil)
 
 str(df_brasil)
-names(df_brasil)[2] <- "Dolar"
-names(df_brasil)[3] <- "CtBarril"
-names(df_brasil)[4] <- "Etanol"
-names(df_brasil)[5] <- "GasolProdr"
-names(df_brasil)[6] <- "TribEst"
-names(df_brasil)[7] <- "TribFed"
-names(df_brasil)[8] <- "DistrRev"
-names(df_brasil)[9] <- "IPCA"
-names(df_brasil)[10] <- "PCTribEst"
-names(df_brasil)[12] <- "EstEmp"
-names(df_brasil)[13] <- "CDI"
-names(df_brasil)[15] <- "MRed"
-names(df_brasil)[16] <- "GasolNaBomba"
 
-df_brasil$IBC = as.numeric(gsub(",", ".", df_brasil$IBC ))
-
-head(df_brasil) 
-
-str(df_brasil)
-
-df_brasil$EstEmp = gsub("\\.","",df_brasil$EstEmp)
-
-head(df_brasil) 
-
-
-df_brasil$EstEmp = as.numeric(gsub(",",".",df_brasil$EstEmp))
-
-View(df_brasil)
 
 write.csv(df_brasil, "df_brasil.csv",row.names=FALSE)
 
+#SUDESTE
+df_sudeste <- subset(df_mediana, Sigla_regiao== 'SE')
+
+df_sudeste=df_sudeste[-c(4)]
+
+View(df_sudeste)
+
+str(df_sudeste)
+
+
+write.csv(df_sudeste, "df_sudeste.csv",row.names=FALSE)
+
+#SUL
+df_sul <- subset(df_mediana, Sigla_regiao== 'S')
+
+df_sul=df_sul[-c(4)]
+
+View(df_sul)
+
+str(df_sul)
+
+
+write.csv(df_sul, "df_sul.csv",row.names=FALSE)
+
+#CENTRO OESTE
+df_centro_oeste <- subset(df_mediana, Sigla_regiao== 'CO')
+
+df_centro_oeste=df_centro_oeste[-c(4)]
+
+View(df_centro_oeste)
+
+str(df_centro_oeste)
+
+
+write.csv(df_centro_oeste, "df_centro_oeste.csv",row.names=FALSE)
+
+#NORDESTE
+df_nordeste <- subset(df_mediana, Sigla_regiao== 'NE')
+
+df_nordeste=df_nordeste[-c(4)]
+
+View(df_nordeste)
+
+str(df_nordeste)
+
+
+write.csv(df_nordeste, "df_nordeste.csv",row.names=FALSE)
+
+#NORTE
+df_norte <- subset(df_mediana, Sigla_regiao== 'N')
+
+df_norte=df_norte[-c(4)]
+
+View(df_norte)
+
+str(df_norte)
+
+
+write.csv(df_norte, "df_norte.csv",row.names=FALSE)
 
 summary(df_brasil, maxsum = max(lengths(lapply(df_brasil, unique))))
 
