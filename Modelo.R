@@ -1,6 +1,18 @@
 setwd('D:\\Trabalho_Bloco_A')
  
 
+#todo
+#Analise de fatores 
+# Método de Análise Fatorial
+#recomenda-se a ACP, quando o objetivo é determinar o número mínimo de fatores que respondem pela máxima variância nos dados, 
+#sendo os fatores chamados componentes principais (MALHOTRA, 2001).
+
+ 
+
+
+
+
+
 #Bibliotecas 
 library(tseries)
 library(tidyverse)
@@ -10,8 +22,7 @@ library(urca)
 df_final <-read.csv('df_brasil.csv')
 df_final=df_final[-c(1,9)]
 
-df
-
+ 
  
 #plotando variaveis
  df_ts<-ts(df_final, start = c(2018,07), end=c(2020,07), freq=12)  
@@ -219,6 +230,11 @@ plot(round(df_final[,"Revenda"] / df_final[,"GasolNaBomba"] ,2) ,
 round(df_final[,"Distr_trans"] / df_final[,"GasolNaBomba"] ,2)
 )
  
+regressao1 = lm(y_train~x_train)
+summary(regressao1)
+
+regressao=step(lm(df_final[,"GasolNaBomba"]~df_final[-c(13)]),direction = 'backfoward')
+summary(regressao)
 
 
 
@@ -239,21 +255,73 @@ autoplot(fcast)
 
 
 #roteiro
-#1) lm simples
-#2) arima e arimax 
-#3) neural network
+
+
+# Modelo naive simples (BASE LINE)
+
+    naive = snaive(y_train, h=5)
+    
+    #avaliacao
+    MAPE(naive$mean, y_test) * 100 #9,34% de erro
+    
+    #plot
+    plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Seasonal Naive Forecast", type='l')
+    lines(naive$mean, col="red", lwd=2)
+
 
 #4) media movel (Base Line) <-
 
 
 #### MEDIA MOVEL
-mean <- mean(y)
-mean6 <- rollmean(y, k=6, align = "right")
-mean9 <- rollmean(y, k=9, align = "right")
-mean12 <- rollmean(y, k=12, align = "right")
+    
+library(smooth)
+require(Mcomp)
+
+#media simples 
+m0 <- mean(y_train)
+f_mean <- ts(rep(m0, each=5),start = c(2020,03), end=c(2020,07), freq=12)  
+MAPE(f_mean, y_test) * 100 #9,44% de erro
+
+plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Media Simples", type='l')
+lines(f_mean, col="red", lwd=2)
 
 
-######################## deep fucking learning
+ 
+#iniciando a variavel
+m <- 0
+m[0] <- MAPE(f_mean, y_test) * 100 # 
+ 
+for(k in 1:12) { 
+  print(cat("modelo ",k,"\n"))
+  print(MAPE(forecast(sma(y_train ,order = k ,h=3, silent=FALSE),h = 5)$mean,y_test)*100) 
+  m[k] <-MAPE(forecast(sma(y_train ,order = k ,h=3, silent=FALSE),h = 5)$mean,y_test)*100 
+      }
+ 
+
+#Suavimento exponencial = State Space Models (Exponential Smoothing)
+
+    #treino
+    ets_model = ets(y_train, allow.multiplicative.trend = TRUE)
+    summary(ets_model)
+   
+     #avaliacao
+    ets_forecast = forecast(ets_model, h=5)
+    MAPE(ets_forecast$mean, y_test) *100  #10.08 % erro
+    
+    #plot
+    plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Lts Model", type='l')
+    lines(ets_forecast$mean, col="red", lwd=2)
+    
+
+#1) lm simples
+
+#2) arima e arimax 
+#3) neural network
+
+
+
+
+######################## deep fucking learning 8.228417
 
  library(keras)
  library(mlbench)
@@ -261,75 +329,52 @@ mean12 <- rollmean(y, k=12, align = "right")
  library(magrittr)
  library(neuralnet)
 
-   
- n <- neuralnet(GasolNaBomba~IBC+PIM+CtBarril+Dolar+IPCA+CDI+EstEmp,
-                data = training,
-                hidden = c(8,5),
-                linear.output = F,
+  
+    #scaling train
+    
+maxs <- apply(training, 2, max) 
+mins <- apply(training, 2, min)
+scaled_train <- as.data.frame(scale(training, center = mins, scale = maxs - mins))   
+    
+#scaling test
+ 
+scaled_test <- as.data.frame(scale(test, center = mins, scale = maxs - mins))   
+
+
+
+
+n <- names(training)
+f <- as.formula(paste("GasolNaBomba ~", paste(n[!n %in% "GasolNaBomba"], collapse = " + "))) #equacao
+    
+ nn <- neuralnet(f,
+                data = scaled_train,
+                hidden =  5,
+                linear.output = TRUE,
                 lifesign = 'full',
                 rep=1)
  
  #rede
- plot(n,col.hidden = 'darkgreen',     
-      col.hidden.synapse = 'darkgreen',
-      show.weights = F,
-      information = F,
-      fill = 'lightblue')
+ plot(nn)
+ 
 
- training <- as.matrix(training)
- dimnames(data) <- NULL
+#pesos 
+ nn$result.matrix 
  
- set.seed(123)
- ind <- sample(2, nrow(data), replace = T, prob = c(.7, .3))
- training <- data[ind==1,1:13]
- test <- data[ind==2, 1:13]
- trainingtarget <- data[ind==1, 14]
- testtarget <- data[ind==2, 14]
+ # Predict
+ pr.nn <- compute(nn,scaled_test) 
  
  
-#scaling
+ #revertendo o scale
+ result<-pr.nn$net.result*(max(training$GasolNaBomba) - min(training$GasolNaBomba) ) + min(training$GasolNaBomba) 
  
- m <- colMeans(x)
- s <- apply(training, 2, sd)
- training <- scale(training, center = m, scale = s)
- test <- scale(test, center = m, scale = s)
- 
- str(trainingtarget)
- 
- str(testtarget)
+ MAPE(result, y_test) * 100 # 
  
  
- #Model Creation
- model <- keras_model_sequential()
- model %>%
-   layer_dense(units = 5, activation = 'relu', input_shape = c(13)) %>%
-   layer_dense(units = 1)
+ result_ts<- ts(result, start = c(2020,03), end=c(2020,07), freq=12) 
+ #Faz o gráfico
  
- 
- #Model Compilation
- model %>% compile(loss = 'mse',
-                   optimizer = 'rmsprop', 
-                   metrics = 'mae') 
- 
- #Model Fitting
- mymodel <- model %>%          
-   fit(training,trainingtarget,
-       epochs = 100,
-       batch_size = 32,
-       validation_split = 0.2)
- 
- #predict
- 
- model %>% evaluate(test, testtarget)
- pred <- model %>% predict(test)
- mean((testtarget-pred)^2) 
- plot(testtarget, pred) 
- 
- 
- df_rj <- read_csv('D:\\Trabalho_Bloco_A\\df_rj.csv')
- 
- sd(df_rj$medianaGasolinaBomba) 
-  
+ plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Rede Neural", type='l')
+ lines( result_ts, col="red", lwd=2)
  
  
  
