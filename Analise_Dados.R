@@ -69,19 +69,21 @@ geraAnalise <- function(df,name)
   }
   
   #correlação pearson
+   pearsontitle=sprintf("Correlação por Pearson - %s",name)
    pearsonname=sprintf("pearson_%s.png",name)
    png(pearsonname, width = 600, height = 600, res = 72)
   
   
-   corrplot(cor(df_cor[-1],method = "pearson"), method = "number", type = "lower")
+   corrplot(cor(df_cor[-1],method = "pearson"), method = "number", type = "lower",title=pearsontitle,mar=c(0,0,1,0))
   
    dev.off()
   #correlação spearman
   
+   spearmantitle=sprintf("Correlação por Spearman - %s",name)
    spearmanname=sprintf("spearman_%s.png",name)
    png(spearmanname, width = 600, height = 600, res = 72)
   
-   corrplot(cor(df_cor[-1],method = "spearman"), method = "number", type = "lower")
+   corrplot(cor(df_cor[-1],method = "spearman"), method = "number", type = "lower",title=spearmantitle,mar=c(0,0,1,0))
   
    dev.off()
   
@@ -97,7 +99,7 @@ geraAnalise <- function(df,name)
   # 
   file_dolarxgasol=sprintf("dolar_x_gasol_%s.png",name)
 
-  ggplot(df_dl_gas, aes(x = mes, y = reais, color = objeto,group=objeto)) + geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ ggtitle("Dolar x Gasolina na bomba")
+  ggplot(df_dl_gas, aes(x = mes, y = reais, color = objeto,group=objeto)) + geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ ggtitle("Dolar x Gasolina na bomba", subtitle = name )
   ggsave(file=file_dolarxgasol)
 
   #Gráfico da Cotação do barril em reais
@@ -107,7 +109,7 @@ geraAnalise <- function(df,name)
   
   ggplot(data=df, aes(x=mes)) +
      geom_line(aes(y = CtBarril, group=2), color = "steelblue", size=1)+
-     ggtitle("Cotação Barril em Real") +
+     ggtitle("Cotação Barril em Real", subtitle = name) +
      ylab("Cotação (R$)")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
   ggsave(file=file_brent)
 
@@ -117,7 +119,7 @@ geraAnalise <- function(df,name)
    
    ggplot(data=df, aes(x=mes)) +
      geom_line(aes(y = PCTribEst, group=1), color = "darkred", size=1)+
-     ggtitle("Alíquota impostos estaduais") +
+     ggtitle("Alíquota impostos estaduais", subtitle = name) +
      ylab("%")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
    ggsave(file=file_imp)
    
@@ -129,7 +131,7 @@ geraAnalise <- function(df,name)
    
    file_trfedxgasol=sprintf("TribFed_x_gasol_%s.png",name)
    
-   ggplot(df_if_gas, aes(x = mes, y = reais, color = objeto,group=objeto)) + geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ ggtitle("Dolar x Gasolina na bomba")
+   ggplot(df_if_gas, aes(x = mes, y = reais, color = objeto,group=objeto)) + geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ ggtitle("Dolar x Gasolina na bomba", subtitle = name)
    ggsave(file=file_trfedxgasol)  
    
    
@@ -147,7 +149,7 @@ geraAnalise <- function(df,name)
    
    file_bargasol=sprintf("barril_x_gasol_%s.png",name)
    
-   ggplot(df_bar_gas, aes(x = mes, y = Valor, color = objeto,group=objeto)) + geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ ggtitle("Barril de Petroleo x Gasolina na bomba (normalizados)")
+   ggplot(df_bar_gas, aes(x = mes, y = Valor, color = objeto,group=objeto)) + geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ ggtitle("Barril de Petroleo x Gasolina na bomba (normalizados)", subtitle = name)
    ggsave(file=file_bargasol)
    
    #Imposto Estadual x Gasolina na bomba normalizados
@@ -156,20 +158,20 @@ geraAnalise <- function(df,name)
    
    file_tesgasol=sprintf("TribEst_x_gasol_%s.png",name)
    
-   ggplot(df_tes_gas, aes(x = mes, y = Valor, color = objeto,group=objeto)) + geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ ggtitle("Tributo Estadual x Gasolina na bomba (normalizados)")
+   ggplot(df_tes_gas, aes(x = mes, y = Valor, color = objeto,group=objeto)) + geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ ggtitle("Tributo Estadual x Gasolina na bomba (normalizados)", subtitle = name)
    ggsave(file=file_tesgasol)
    
 }
 
-geraAnalise(df_brasil,"brasil")
+geraAnalise(df_brasil,"Brasil")
 
-geraAnalise(df_sudeste,"sudeste")
+geraAnalise(df_sudeste,"Sudeste")
 
-geraAnalise(df_sul,"sul")
+geraAnalise(df_sul,"Sul")
 
-geraAnalise(df_centro_oeste,"centro oeste")
+geraAnalise(df_centro_oeste,"Centro Oeste")
 
-geraAnalise(df_nordeste,"nordeste")
+geraAnalise(df_nordeste,"Nordeste")
 
-geraAnalise(df_norte,"norte")
+geraAnalise(df_norte,"Norte")
 
