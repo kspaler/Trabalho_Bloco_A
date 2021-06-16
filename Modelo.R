@@ -6,13 +6,7 @@ setwd('D:\\Trabalho_Bloco_A')
 # Método de Análise Fatorial
 #recomenda-se a ACP, quando o objetivo é determinar o número mínimo de fatores que respondem pela máxima variância nos dados, 
 #sendo os fatores chamados componentes principais (MALHOTRA, 2001).
-
  
-
-
-
-
-
 #Bibliotecas 
 library(tseries)
 library(tidyverse)
@@ -20,12 +14,12 @@ library(urca)
  
 #importando o dataframe
 df_final <-read.csv('df_brasil.csv')
-df_final=df_final[-c(1,9)]
+df_final=df_final[-c(1,6,7,9)]
 
  
  
 #plotando variaveis
- df_ts<-ts(df_final, start = c(2018,07), end=c(2020,07), freq=12)  
+ df_ts<-ts(df_final, start = c(2018,07), end=c(2020,10), freq=12)  
 autoplot( df_ts, facets=TRUE) +
   xlab("Year") + ylab("") +
   ggtitle("Variáveis economicas e o Preço da Gasolina")
@@ -33,14 +27,8 @@ autoplot( df_ts, facets=TRUE) +
 
 
 #verificando sazonalidade
-
-
-
-
-
- 
 y  <- ts(as.vector(df_final[, c("GasolNaBomba")]))
-y  <- ts(y, start = c(2018,07), end=c(2020,07), freq=12)  
+y  <- ts(y, start = c(2018,07), end=c(2020,10), freq=12)  
 
 log_y = log(y)
 # Create new fit on log scale series for seasonal decomposition
@@ -50,8 +38,9 @@ plot(sazonal, main = "Decomposição sazonal do log(Preco Medio Gasolina na Bomba)
 
  
 
-summary(ur.kpss(y)) 
+summary(ur.kpss(y))
 
+ 
 #Test is of type: mu with 2 lags. 
 #Value of test-statistic is: 0.3599
 
@@ -63,10 +52,11 @@ summary(ur.kpss(y))
 #within the range we would expect for stationary data. 
 #we can conclude that the   data are stationary.
 #podemos utilizar o modelo arima 
+plot(y)
+plot(d.y)
 
-
-
-
+plot(diff(d.y))
+d.y <- diff(y)
 
 summary(ur.kpss(d.y))
 #Stationarity Testing
@@ -80,38 +70,38 @@ summary(ur.kpss(d.y))
 
 
 # Dickey-Fuller test for variable
-adf.test(y, alternative="stationary", k=0)
-adf.test(y, alternative="explosive", k=0) 
+adf.test(d.y, alternative="stationary", k=0)
+adf.test(d.y, alternative="explosive", k=0) 
 
 # Augmented Dickey-Fuller test
 adf.test(y, alternative="stationary")
 
 
-summary(ur.df(y))
+summary(ur.df(d.y))
 
 
 
 #separando em treino e Teste
-training <- df_final[1:20,]  
-test <- df_final[21:25,] 
+training <- df_final[1:23,]  
+test <- df_final[24:28,] 
 
 #variavel endogena
 y_train <- ts(as.vector(training[, c("GasolNaBomba")]))
-y_train <- ts(y_train, start = c(2018,07), end=c(2020,02), freq=12)  
+y_train <- ts(y_train, start = c(2018,07), end=c(2020,05), freq=12)  
 
 y_test <- ts(as.vector(test[, c("GasolNaBomba")]))
-y_test <- ts(y_test, start = c(2020,03), end=c(2020,07), freq=12)  
+y_test <- ts(y_test, start = c(2020,06), end=c(2020,10), freq=12)  
 
-
+ 
 
 #variavel exogena
-x_train <- subset(training, select = cbind('IBC', 'PIM', 'Dolar','IPCA','CDI', 'EstEmp')) 
+x_train <- training['Dolar','CtBarril','Etanol','GasolProdr','PIM', 'IPCA','CDI', 'EstEmp','DistrRev','MRed','IBC']
 x_train <- ts(as.vector(x_train))
-x_train <- ts(x_train, start = c(2018,07), end=c(2020,02), freq=12)  
+x_train <- ts(x_train, start = c(2018,07), end=c(2020,05), freq=12)  
 
-x_test <- subset(test, select = cbind('IBC', 'PIM',  'Dolar','IPCA','CDI', 'EstEmp')) 
+x_test <- subset(test, select = cbind('Dolar','CtBarril','Etanol','GasolProdr','PIM', 'IPCA','CDI', 'EstEmp','DistrRev','MRed','IBC')) 
 x_test <- ts(as.vector(x_test))
-x_test <- ts(x_train,  start = c(2018,07), end=c(2020,02), freq=12) 
+x_test <- ts(x_train,  start = c(2020,06), end=c(2020,10), freq=12) 
 
 
 # Função de autocorrelação (ACF) e a função de autocorrelação parcial (PACF):
@@ -183,7 +173,7 @@ checkresiduals(auto2)
 library(MLmetrics)
 
 
-forecast_arima <- forecast(auto2, xreg =  x_test[,c('IBC', 'PIM', 'CtBarril', 'Dolar','IPCA','CDI', 'EstEmp')] )
+forecast_arima <- forecast(auto2, xreg =  x_test[,cbind('Dolar','CtBarril','Etanol','GasolProdr','PIM', 'IPCA','CDI', 'EstEmp','DistrRev','MRed','IBC')] )
 plot(forecast_arima, xlab = "Data", ylab = "R$", main = "Previsao do preco da gasolina com ARIMA + regressores - teste")
 
 MLmetrics::MAPE(forecast_arima$mean %>% as.numeric(), test[ , "GasolNaBomba"]) 
@@ -242,7 +232,7 @@ summary(regressao)
 
 #neural network autoregression or NNAR model.
 
-fit <- nnetar(df_ts[,"GasolNaBomba"],xreg = df_ts[,c('IBC', 'PIM', 'CtBarril', 'Dolar','IPCA','CDI', 'EstEmp')], lambda=0)
+fit <- nnetar(df_ts[,"GasolNaBomba"],xreg = df_ts[,cbind('Dolar','CtBarril','Etanol','GasolProdr','PIM', 'IPCA','CDI', 'EstEmp','DistrRev','MRed','IBC')], lambda=0)
 autoplot(forecast(fit,h=12, xreg=fit$xreg))
 
 
