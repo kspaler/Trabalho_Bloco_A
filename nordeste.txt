@@ -1,0 +1,29 @@
+"     mes";"    Dolar";"   CtBarril";"    Etanol";"  GasolProdr";"   TribEst";"   TribFed";"   DistrRev";"     IPCA";"  PCTribEst";"     PIM";"    EstEmp";"     CDI";"     IBC";"     MRed";" GasolNaBomba"
+"";"2018-07:1  ";"Min.   :3.725  ";"Min.   : 94.04  ";"Min.   :0.2795  ";"Min.   :0.6314  ";"Min.   :1.220  ";"Min.   :0.6869  ";"Min.   :0.4400  ";"Min.   :-0.17830  ";"Min.   :26.96  ";"Min.   :47.40  ";"Min.   :37981600  ";"Min.   :1.900  ";"Min.   :119.1  ";"Min.   :137510  ";"Min.   :3.856  "
+"";"2018-08:1  ";"1st Qu.:3.855  ";"1st Qu.:227.82  ";"1st Qu.:0.5326  ";"1st Qu.:1.1286  ";"1st Qu.:1.263  ";"1st Qu.:0.6869  ";"1st Qu.:0.6310  ";"1st Qu.: 0.02696  ";"1st Qu.:28.58  ";"1st Qu.:72.08  ";"1st Qu.:38670679  ";"1st Qu.:3.872  ";"1st Qu.:134.9  ";"1st Qu.:148513  ";"1st Qu.:4.369  "
+"";"2018-09:1  ";"Median :4.088  ";"Median :244.03  ";"Median :0.5381  ";"Median :1.2119  ";"Median :1.284  ";"Median :0.6869  ";"Median :0.6874  ";"Median : 0.07829  ";"Median :28.90  ";"Median :76.35  ";"Median :38944840  ";"Median :5.805  ";"Median :137.3  ";"Median :150398  ";"Median :4.423  "
+"";"2018-10:1  ";"Mean   :4.355  ";"Mean   :242.22  ";"Mean   :0.5410  ";"Mean   :1.2130  ";"Mean   :1.284  ";"Mean   :0.6870  ";"Mean   :0.6908  ";"Mean   : 0.09653  ";"Mean   :29.12  ";"Mean   :74.48  ";"Mean   :38901896  ";"Mean   :4.975  ";"Mean   :136.2  ";"Mean   :154136  ";"Mean   :4.416  "
+"";"2018-11:1  ";"3rd Qu.:4.967  ";"3rd Qu.:268.85  ";"3rd Qu.:0.5575  ";"3rd Qu.:1.3275  ";"3rd Qu.:1.311  ";"3rd Qu.:0.6869  ";"3rd Qu.:0.7428  ";"3rd Qu.: 0.17232  ";"3rd Qu.:29.71  ";"3rd Qu.:81.70  ";"3rd Qu.:39259744  ";"3rd Qu.:6.400  ";"3rd Qu.:139.5  ";"3rd Qu.:156852  ";"3rd Qu.:4.517  "
+"";"2018-12:1  ";"Max.   :5.654  ";"Max.   :323.88  ";"Max.   :0.6915  ";"Max.   :1.6114  ";"Max.   :1.325  ";"Max.   :0.6900  ";"Max.   :0.9414  ";"Max.   : 0.48529  ";"Max.   :32.06  ";"Max.   :91.30  ";"Max.   :39625294  ";"Max.   :6.400  ";"Max.   :143.3  ";"Max.   :181171  ";"Max.   :4.712  "
+"";"2019-01:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2019-02:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2019-03:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2019-04:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2019-05:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2019-06:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2019-07:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2019-08:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2019-09:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2019-10:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2019-11:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2019-12:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2020-01:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2020-02:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2020-03:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2020-04:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2020-05:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2020-06:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2020-07:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2020-08:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2020-09:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
+"";"2020-10:1  ";NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA
