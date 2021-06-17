@@ -128,11 +128,11 @@ geraAnalise <- function(df,name)
    
    df_if_gas <- df %>%
      tidyr::gather(objeto, reais,c(TribFed,GasolNaBomba))
-   
+
    file_trfedxgasol=sprintf("TribFed_x_gasol_%s.png",name)
-   
-   ggplot(df_if_gas, aes(x = mes, y = reais, color = objeto,group=objeto)) + geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ ggtitle("Dolar x Gasolina na bomba", subtitle = name)
-   ggsave(file=file_trfedxgasol)  
+
+   ggplot(df_if_gas, aes(x = mes, y = reais, color = objeto,fill=objeto)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1))+ ggtitle("Tributo Federal x Gasolina na bomba", subtitle = name)
+   ggsave(file=file_trfedxgasol)
    
    
    #Min-max Scaling
@@ -174,4 +174,12 @@ geraAnalise(df_centro_oeste,"Centro Oeste")
 geraAnalise(df_nordeste,"Nordeste")
 
 geraAnalise(df_norte,"Norte")
+
+
+
+df_if_gas <- df_brasil %>%
+   tidyr::gather(objeto, reais,c(TribFed,GasolNaBomba))
+
+ggplot(df_if_gas, aes(x = mes, y = reais, color = objeto,fill=objeto)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1))+ ggtitle("Tributo Federal x Gasolina na bomba", subtitle = "Brasil")
+
 
