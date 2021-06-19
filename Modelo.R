@@ -4,10 +4,18 @@ setwd('D:\\Trabalho_Bloco_A')
 library(tseries)
 library(tidyverse)
 library(urca)
-
+library(forecast)
+library(smooth)
+require(Mcomp)
+library(lmtest)
  
 library(MLmetrics)#Avaliacao do Modelo
 
+library(keras)
+library(mlbench)
+library(dplyr)
+library(magrittr)
+library(neuralnet)
 
 #Leitura e divisão de dados
 
@@ -64,7 +72,8 @@ MAPE(naive$mean, y_test) * 100 #  1.57% de erro
 #plot
 plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Seasonal Naive Forecast", type='l')
 lines(naive$mean, col="red", lwd=2)
-
+grid(col='darkgrey',
+     lwd=2)
 
 
 
@@ -72,9 +81,7 @@ lines(naive$mean, col="red", lwd=2)
   
   
 ####  2 . MEDIA MOVEL
-  
-library(smooth)
-require(Mcomp)
+
 
 #media simples 
 m0 <- mean(y_train)
@@ -83,6 +90,8 @@ MAPE(f_mean, y_test) * 100 # 2.52% de erro
 
 plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Media Simples", type='l')
 lines(f_mean, col="red", lwd=2)
+grid(col='darkgrey',
+     lwd=2)
 
 
 
@@ -104,19 +113,63 @@ plot(m12)
 
 #plot FIT
 plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Modelo média móvel Doze periodos - Fit(vermelho)", type='l')
-lines(sma(y_train ,order = 12 ,h=4, silent=FALSE), col="red", lwd=2)
-
+lines(sma(y_train ,order = 12 , silent=FALSE), col="red", lwd=2)
+grid(col='darkgrey',
+     lwd=2)
 
 #plot PREVISAO
 plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Modelo média móvel Doze periodos", type='l')
 lines(m12$mean, col="red", lwd=2)
-
+grid(col='darkgrey',
+     lwd=2)
 MAPE(forecast(sma(y_train ,order = 12 ,h=4, silent=FALSE),h = 4)$mean,y_test)*100  # MAPE 1.35%
+
+
 
 
 ########################################################################################################################
 
-####  3 . Suavimento exponencial = State Space Models (Exponential Smoothing)
+
+
+####  3 Regressão Linear Múltipla
+
+
+
+regressao=step(lm(GasolNaBomba~. , data = training),direction = 'backward')
+summary(regressao)
+
+#modelo com coeficientes significativos  sem o preco do produtor que estava deixando R2 1
+
+regressao_2 = step(lm(GasolNaBomba~Dolar+CtBarril + PCTribEst +Etanol+ IPCA+EstEmp + CDI+
+                        IBC, data = training),direction = 'backward') #Create the linear regression
+summary(regressao_2)
+
+
+#avaliacao 
+lm_forecast = forecast(regressao_2,  h = 4)
+MAPE(lm_forecast[1:4],  test$GasolNaBomba) *100   # % erro   #5.036% 
+
+y_heat<-predict(regressao_2, newdata = test[ , names(test) != "GasolNaBomba"]) 
+
+
+y_heat <- ts(y_heat, start = c(2018,07), end=c(2020,10), freq=12)  
+y_2 <- ts(regressao_2$fitted.values, start = c(2018,07), end=c(2020,10), freq=12)  
+#plot Fit
+plot(training[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Modelo Regressão Linear Múltipla - Fitted", type='l')
+lines(regressao_2$fitted.values,  col="red", lwd=2)
+grid(col='darkgrey',
+     lwd=2)
+#plot previsao
+plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Modelo Regressão Linear Múltipla - Previsto vs Realizado", type='l')
+lines(y_2,  col="red", lwd=2)
+grid(col='darkgrey',
+     lwd=2)
+
+########################################################################################################################
+
+#########  Séries Temporais
+
+####  4.1 Suavimento exponencial = State Space Models (Exponential Smoothing)
  
 
 #treino
@@ -128,52 +181,21 @@ ets_forecast = forecast(ets_model, h=4)
 MAPE(ets_forecast$mean, y_test) *100  # 6.27  % erro
 
 #plot FIT
-plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Lts Model - FIT (vermelho)", type='l')
+plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="ets Model - FIT (vermelho)", type='l')
 lines(ets_forecast$fitted, col="red", lwd=2)
-
+grid(col='darkgrey',
+     lwd=2)
 
 
 #plot PREVISAO
-plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Lts Model", type='l')
+plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="ets Model", type='l')
 lines(ets_forecast$mean, col="red", lwd=2)
-
+grid(col='darkgrey',
+     lwd=2)
 
 ########################################################################################################################
 
 
-####  4 Regressão Linear Múltipla
-
-
-
-regressao=step(lm(GasolNaBomba~. , data = training),direction = 'backward')
-summary(regressao)
-
-#modelo com coeficientes significativos  sem o preco do produtor que estava deixando R2 1
-
-regressao_2 = step(lm(GasolNaBomba~Dolar+CtBarril + PCTribEst +Etanol+ IPCA+EstEmp + CDI+
-                  IBC, data = training),direction = 'backward') #Create the linear regression
-summary(regressao_2)
-
-
-#avaliacao 
-lm_forecast = forecast(regressao_2,  h = 4)
-MAPE(lm_forecast[1:4],  test$GasolNaBomba) *100   # % erro   #5.036368  
-
-y_heat<-predict(regressao_2, newdata = test[ , names(test) != "GasolNaBomba"]) 
- 
- 
-y_heat <- ts(y_heat, start = c(2018,07), end=c(2020,10), freq=12)  
-y_2 <- ts(model$fitted.values, start = c(2018,07), end=c(2020,10), freq=12)  
-#plot Fit
-plot(training[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Modelo Regressão Linear Múltipla - Fitted", type='l')
-lines(model$fitted.values,  col="red", lwd=2)
-
-#plot previsao
-plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Modelo Regressão Linear Múltipla - Previsto vs Realizado", type='l')
-lines(y_2,  col="red", lwd=2)
-
- 
-###### - 5 Modelos Séries Temporais
 
 #verificando sazonalidade
 y  <- ts(as.vector(df_final[, c("GasolNaBomba")]))
@@ -202,7 +224,7 @@ d.y <- diff(y)
 summary(ur.kpss(d.y))
  
  
-###### 5.1  m ARIMA(0,0,2)
+###### 4.2  m ARIMA(0,0,2)
 auto <- auto.arima(y_train)
 summary(auto)
 coeftest(auto)
@@ -213,13 +235,15 @@ MAPE(arima.forecast$pred, y_test) *100  #  teste  1.39
 accuracy(auto)
 
 #plot Fit
-plot(y_train, col="blue", xlab="Ano", ylab="R$", main="Previsao do preco da gasolina com ARIMA", type='l')
+plot(y_train, col="blue", xlab="Ano", ylab="R$", main="Previsao do preco da gasolina com ARIMA - FIT", type='l')
 lines(auto$fitted,  col="red", lwd=2)
-
+grid(col='darkgrey',
+     lwd=2)
 # plot previstos
- plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Previsao do preco da gasolina com ARIMA previsão", type='l')
+ plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Previsao do preco da gasolina com ARIMA previsão - Forecast", type='l')
 lines(arima.forecast$pred,    col="red", lwd=2)
-
+grid(col='darkgrey',
+     lwd=2)
  
 # hipotese nulo de que a autocorrelação é diferente de zero. 
 Box.test(auto$residuals, type = "Ljung-Box") #p valor alto indica que altocorrelacao é igual a zero
@@ -227,7 +251,7 @@ Box.test(auto$residuals, type = "Ljung-Box") #p valor alto indica que altocorrel
 # Checando normalidade ods residuos  
 checkresiduals(auto)
 
-############## 5.2  Modelo Arimax com regressores
+############## 4.3  Modelo Arimax com regressores
 
 auto2 <- auto.arima(y_train, xreg=x_train) #ARIMAX (0,0,0)
 summary(auto2)
@@ -241,32 +265,29 @@ accuracy(auto2)
 MAPE(arima2.forecast$pred[1:4], y_test) *100  # 6.63 %
  
 #plot Fit
-plot(y_train, col="blue", xlab="Ano", ylab="R$", main="Previsao do preco da gasolina com ARIMA", type='l')
+plot(y_train, col="blue", xlab="Ano", ylab="R$", main="Previsao do preco da gasolina com ARIMAX - fit", type='l')
 lines(auto2$fitted,  col="red", lwd=2)
-
+grid(col='darkgrey',
+     lwd=2)
 #previsto no periodo teste
 x <-ts(arima2.forecast$pred[1:3], start= c(2020,07), frequency = 12)
 
 # plot previstos
-plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Previsao do preco da gasolina com ARIMA + regressores - Previsto", type='l')
+plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Previsao do preco da gasolina com ARIMA + regressores - Forecast", type='l')
 lines(x , col="red", lwd=2)
- 
+grid(col='darkgrey',
+     lwd=2) 
 # hipotese nulo de que a autocorrelação é diferente de zero. 
 Box.test(auto2$residuals, type = "Ljung-Box") #p valor alto indica que altocorrelacao é igual a zero
 
  
 # Checando normalidade ods residuos  
-checkresiduals(auto)
+checkresiduals(auto2)
 
  
 
-################## Redes Neurais 
+################## 5. Redes Neurais 
 
- library(keras)
- library(mlbench)
- library(dplyr)
- library(magrittr)
- library(neuralnet)
 
   
 #scaling train
@@ -277,7 +298,7 @@ scaled_train <- as.data.frame(scale(training, center = mins, scale = maxs - mins
 #scaling test
 scaled_test <- as.data.frame(scale(test, center = mins, scale = maxs - mins))   
 
-
+set.seed(1)
  
 n <- names(training)
  
@@ -298,12 +319,8 @@ n <- names(training)
                  linear.output = TRUE,
                  algorithm="backprop",
                  learningrate=0.01,
-                 rep=20)
- 
- 
- 
- 
- 
+                 rep=100)
+  
  
  #rede
  plot(nn)
@@ -327,11 +344,11 @@ n <- names(training)
  
  #avaliacao
 nn.forecast =  MAPE(result, test[,"GasolNaBomba"]) * 100 #3.68 %
+nn.forecast
 
-
-nn.bp.forecast =  MAPE(result2, test[,"GasolNaBomba"]) * 100 # 1.22% 
+nn.bp.forecast =  MAPE(result2, test[,"GasolNaBomba"]) * 100 # 2.66%
  
-
+nn.bp.forecast
 
 result_ts<- ts(result, start = c(2020,07), end=c(2020,10), freq=12)  
 
@@ -341,54 +358,15 @@ result2_ts<- ts(result2, start = c(2020,07), end=c(2020,10), freq=12)
 #plot previsao NN
 plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Previsao do preco da gasolina com RNN", type='l')
 lines(result_ts,  col="red", lwd=2) 
- 
+grid(col='darkgrey',
+     lwd=2) 
 
 #plot previsao NN backprop
-plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Previsao do preco da gasolina com RNN com back propagation", type='l')
+plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$",
+     main="Previsao do preco da gasolina com RNN com back propagation", type='l')
 lines(result2_ts,  col="red", lwd=2)  
-          
-
-
-
-
-
-################ Previsão Final com o melhor modelo 
- 
-#scaling train
-maxs <- apply(df_final, 2, max) 
-mins <- apply(df_final, 2, min)
-scaled_train <- as.data.frame(scale(df_final, center = mins, scale = maxs - mins))   
- 
-n <- names(df_final)
-
-
-nn.bp.f <- neuralnet(GasolNaBomba~Dolar+CtBarril + PCTribEst +Etanol+ IPCA+EstEmp + CDI+
-                     IBC,
-                   data = scaled_train,
-                   hidden =  6,
-                   linear.output = TRUE,
-                   algorithm="backprop",
-                   learningrate=0.01,
-                   rep=20)
-
-
-# Predict
- 
-pr.nn.bp <- compute(nn.bp.f,scaled_train ) 
-
-#revertendo o scale
-result_ts_bp<-pr.nn.bp$net.result*(max(df_final$GasolNaBomba) - min(df_final$GasolNaBomba) ) + min(df_final$GasolNaBomba) 
-result_ts_bp
-
-#plot previsao NN backprop
-result_ts_bp<- ts(result_ts_bp, start = c(2018,07), end=c(2021,6), freq=12)  
-
-
-plot(df_ts[,"GasolNaBomba"], col="blue", xlab="Ano", ylab="R$", main="Previsao do preco da gasolina com RNN com back propagation", type='l')
-lines(result_ts_bp,  col="red", lwd=2)  
+grid(col='darkgrey',
+     lwd=2)          
 
 
  
-
-
-plot(result_ts_bp)
